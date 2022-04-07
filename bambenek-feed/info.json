@@ -1,0 +1,192 @@
+{
+  "name": "bambenek-feed",
+  "label": "Bambenek Feed",
+  "description": "Bambenek Consulting is an IT consulting firm focused on cybersecurity and cybercrime. This connector facilitates automated operations related to fetching the list of IP addresses/domains of feed families and ingestion of daily threat feeds. This connector has a dependency on the <a href=\"/content-hub/all-content/?contentType=solutionpack&amp;tag=ThreatIntelManagement\" target=\"_blank\" rel=\"noopener\">Threat Intel Management Solution Pack</a>. Install the Solution Pack before enabling ingestion of Threat Feeds from this source.",  
+  "publisher": "Fortinet",
+  "cs_approved": true,
+  "cs_compatible": true,
+  "version": "1.0.0",
+  "category": "Threat Intelligence",
+  "help_online": "",
+  "icon_small_name": "Bambenek_Feed_32x32.png",
+  "icon_large_name": "Bambenek_Feed_80x80.png",
+  "ingestion_supported": true,
+  "tags": [
+    "ThreatIntel"
+  ],
+  "ingestion_modes": [
+    "scheduled"
+  ],
+  "ingestion_preferences": {
+    "modules": [
+      "threat_intel_feeds",
+      "indicators"
+    ]
+  },
+  "configuration": {
+    "fields": [
+      {
+        "title": "Server URL",
+        "name": "server_url",
+        "type": "text",
+        "required": true,
+        "editable": true,
+        "visible": true,
+        "placeholder": "https://faf.bambenekconsulting.com",
+        "value": "https://faf.bambenekconsulting.com",
+        "description": "Server URL of the Bambenek Feed Security server to which you will connect and perform the automated operations."
+      },
+      {
+        "title": "Username",
+        "required": true,
+        "editable": true,
+        "visible": true,
+        "type": "text",
+        "name": "username",
+        "description": "Username to access the Bambenek server to which you will connect and perform the automated operations."
+      },
+      {
+        "title": "Password",
+        "required": true,
+        "editable": true,
+        "visible": true,
+        "type": "password",
+        "name": "password",
+        "description": "Password to access the Bambenek server to which you will connect and perform the automated operations."
+      },
+      {
+        "title": "Verify SSL",
+        "name": "verify_ssl",
+        "type": "checkbox",
+        "required": false,
+        "editable": true,
+        "visible": true,
+        "value": true,
+        "description": "Specifies whether the SSL certificate for the server is to be verified or not. By default, this option is set as True."
+      }
+    ]
+  },
+  "operations": [
+    {
+      "operation": "fetch_indicators",
+      "title": "Fetch Indicators",
+      "category": "investigation",
+      "annotation": "fetch_indicators",
+      "description": "Fetches the Threat Intel Feeds using the feeds family type that you have specified as the \"Feed Family Type\" parameter of Bambenek.",
+      "parameters": [
+        {
+          "title": "High-Confidence Families Only",
+          "name": "high_confidence",
+          "visible": true,
+          "required": true,
+          "editable": true,
+          "type": "checkbox",
+          "value": false,
+          "onchange": {
+            "true": [
+              {
+                "title": "Feed Family Type",
+                "name": "feed_family_types",
+                "visible": true,
+                "required": true,
+                "editable": true,
+                "type": "select",
+                "options": [
+                  "DGA Domain",
+                  "C2 Domain",
+                  "C2 IP",
+                  "C2 All Indicator"
+                ],
+                "description": "Select Bambenek feed family type to fetch specific feed listed IPs/domain. You can choose between DGA Domain, C2 All Indicator, C2 Domain, C2 IP."
+              }
+            ],
+            "false": [
+              {
+                "title": "Feed Family Type",
+                "name": "feed_family_types",
+                "visible": true,
+                "required": true,
+                "editable": true,
+                "type": "select",
+                "options": [
+                  "DGA Domain",
+                  "C2 Domain",
+                  "C2 IP",
+                  "C2 All Indicator",
+                  "Phishing Domain",
+                  "Malware Domain",
+                  "Sinkhole"
+                ],
+                "description": "Select Bambenek feed family type to fetch specific feed listed IPs/domain. You can choose between DGA Domain, C2 All Indicator, C2 Domain, C2 IP, Phishing Domain and Malware Domain."
+              }
+            ]
+          },
+          "tooltip": "Set High-Confidence Families Only to true if you want to fetch specific Bambenek feed family type as high confidence IPs/domain. When Feed Family Type set to DGA Domain and High-Confidence Families Only set to True then it will fetch \"High-Confidence DGA Domain feed\".",
+          "description": "Set High-Confidence Families Only to true if you want to fetch specific Bambenek feed family type as high confidence IPs/domain. When Feed Family Type set to DGA Domain and High-Confidence Families Only set to True then it will fetch High-Confidence DGA Domain feed."
+        }
+      ],
+      "enabled": true,
+      "conditional_output_schema": [
+        {
+          "condition": "{{feed_family_types === 'C2 IP' || feed_family_types === 'DGA Domain' || feed_family_types === 'C2 Domain')}}",
+          "output_schema": {
+            "feed": [
+              {
+                "value": "",
+                "date_created": "",
+                "description": "",
+                "manpage": ""
+              }
+            ],
+            "generatedAt": ""
+          }
+        },
+        {
+          "condition": "{{feed_family_types === 'C2 All Indicator'}}",
+          "output_schema": {
+            "feed": [
+              {
+                "value": "",
+                "ip": "",
+                "nsname": "",
+                "nsip": "",
+                "description": "",
+                "manpage": ""
+              }
+            ],
+            "generatedAt": ""
+          }
+        },
+        {
+          "condition": "{{feed_family_types === 'Phishing Domain' || feed_family_types === 'Malware Domain'}}",
+          "output_schema": {
+            "feed": [
+              {
+                "hostname": "",
+                "registered_domain": "",
+                "ipv4_address": "",
+                "asn": "",
+                "netblock": "",
+                "description": "",
+                "ASN_or_netblock": ""
+              }
+            ],
+            "generatedAt": ""
+          }
+        },
+        {
+          "condition": "{{feed_family_types === 'Sinkhole'}}",
+          "output_schema": {
+            "feed": [
+              {
+                "value": "",
+                "owner": ""
+              }
+            ],
+            "generatedAt": ""
+          }
+        }
+      ]
+    }
+  ]
+}
