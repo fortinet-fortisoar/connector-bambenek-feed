@@ -1,7 +1,7 @@
 {
   "name": "bambenek-feed",
   "label": "Bambenek Feed",
-  "description": "Bambenek Consulting is an IT consulting firm focused on cybersecurity and cybercrime. This connector facilitates automated operations related to fetching the list of IP addresses/domains of feed families and ingestion of daily threat feeds. This connector has a dependency on the <a href=\"/content-hub/all-content/?contentType=solutionpack&amp;tag=ThreatIntelManagement\" target=\"_blank\" rel=\"noopener\">Threat Intel Management Solution Pack</a>. Install the Solution Pack before enabling ingestion of Threat Feeds from this source.",  
+  "description": "Bambenek Consulting is an IT consulting firm focused on cybersecurity and cybercrime. This connector facilitates automated operations related to fetching the list of IP addresses/domains of feed families and ingestion of daily threat feeds.<br></br> This connector has a dependency on the <a href=\"/content-hub/all-content/?contentType=solutionpack&amp;tag=ThreatIntelManagement\" target=\"_blank\" rel=\"noopener\">Threat Intel Management Solution Pack</a>. Install the Solution Pack before enabling ingestion of Threat Feeds from this source.",
   "publisher": "Fortinet",
   "cs_approved": true,
   "cs_compatible": true,
@@ -37,22 +37,40 @@
         "description": "Server URL of the Bambenek Feed Security server to which you will connect and perform the automated operations."
       },
       {
-        "title": "Username",
+        "title": "License Type",
+        "name": "license_type",
+        "type": "select",
         "required": true,
         "editable": true,
         "visible": true,
-        "type": "text",
-        "name": "username",
-        "description": "Username to access the Bambenek server to which you will connect and perform the automated operations."
-      },
-      {
-        "title": "Password",
-        "required": true,
-        "editable": true,
-        "visible": true,
-        "type": "password",
-        "name": "password",
-        "description": "Password to access the Bambenek server to which you will connect and perform the automated operations."
+        "options": [
+          "Commercial",
+          "Non-Commercial"
+        ],
+        "value": "Commercial",
+        "onchange": {
+          "Commercial": [
+            {
+              "title": "Username",
+              "required": true,
+              "editable": true,
+              "visible": true,
+              "type": "text",
+              "name": "username",
+              "description": "Username to access the Bambenek server to which you will connect and perform the automated operations."
+            },
+            {
+              "title": "Password",
+              "required": true,
+              "editable": true,
+              "visible": true,
+              "type": "password",
+              "name": "password",
+              "description": "Password to access the Bambenek server to which you will connect and perform the automated operations."
+            }
+          ]
+        },
+        "description": "Select license type to fetch Bambenek feeds and perform the automated operations."
       },
       {
         "title": "Verify SSL",
@@ -97,7 +115,8 @@
                   "C2 IP",
                   "C2 All Indicator"
                 ],
-                "description": "Select Bambenek feed family type to fetch specific feed listed IPs/domain. You can choose between DGA Domain, C2 All Indicator, C2 Domain, C2 IP."
+                "tooltip": "Note: Supported feed family types for Non-Commercial license: C2 IP, C2 Domain",
+                "description": "Select Bambenek feed family type to fetch specific feed listed IPs/domain. You can choose between DGA Domain, C2 All Indicator, C2 Domain, C2 IP. Note: Supported feed family types for Non-Commercial license: C2 IP, C2 Domain."
               }
             ],
             "false": [
@@ -117,18 +136,19 @@
                   "Malware Domain",
                   "Sinkhole"
                 ],
-                "description": "Select Bambenek feed family type to fetch specific feed listed IPs/domain. You can choose between DGA Domain, C2 All Indicator, C2 Domain, C2 IP, Phishing Domain and Malware Domain."
+                "tooltip": "Note: Supported feed family types for Non-Commercial license: C2 IP, C2 Domain",
+                "description": "Select Bambenek feed family type to fetch specific feed listed IPs/domain. You can choose between DGA Domain, C2 All Indicator, C2 Domain, C2 IP, Phishing Domain and Malware Domain. Note: Supported feed family types for Non-Commercial license: C2 IP, C2 Domain."
               }
             ]
           },
-          "tooltip": "Set High-Confidence Families Only to true if you want to fetch specific Bambenek feed family type as high confidence IPs/domain. When Feed Family Type set to DGA Domain and High-Confidence Families Only set to True then it will fetch \"High-Confidence DGA Domain feed\".",
-          "description": "Set High-Confidence Families Only to true if you want to fetch specific Bambenek feed family type as high confidence IPs/domain. When Feed Family Type set to DGA Domain and High-Confidence Families Only set to True then it will fetch High-Confidence DGA Domain feed."
+          "tooltip": "Set High-Confidence Families Only to true if you want to fetch specific Bambenek feed family type as high confidence IPs/domain. When Feed Family Type set to DGA Domain and High-Confidence Families Only set to True then it will fetch \"High-Confidence DGA Domain Feed\".",
+          "description": "Set High-Confidence Families Only to true if you want to fetch specific Bambenek feed family type as high confidence IPs/domain. When Feed Family Type set to DGA Domain and High-Confidence Families Only set to True then it will fetch \"High-Confidence DGA Domain Feed\"."
         }
       ],
       "enabled": true,
       "conditional_output_schema": [
         {
-          "condition": "{{feed_family_types === 'C2 IP' || feed_family_types === 'DGA Domain' || feed_family_types === 'C2 Domain')}}",
+          "condition": "{{this['feed_family_types'] === 'C2 IP' || this['feed_family_types'] === 'DGA Domain' || this['feed_family_types'] === 'C2 Domain'}}",
           "output_schema": {
             "feed": [
               {
@@ -142,7 +162,7 @@
           }
         },
         {
-          "condition": "{{feed_family_types === 'C2 All Indicator'}}",
+          "condition": "{{this['feed_family_types'] === 'C2 All Indicator'}}",
           "output_schema": {
             "feed": [
               {
@@ -158,7 +178,7 @@
           }
         },
         {
-          "condition": "{{feed_family_types === 'Phishing Domain' || feed_family_types === 'Malware Domain'}}",
+          "condition": "{{this['feed_family_types'] === 'Phishing Domain' || this['feed_family_types'] === 'Malware Domain'}}",
           "output_schema": {
             "feed": [
               {
@@ -175,7 +195,7 @@
           }
         },
         {
-          "condition": "{{feed_family_types === 'Sinkhole'}}",
+          "condition": "{{this['feed_family_types'] === 'Sinkhole'}}",
           "output_schema": {
             "feed": [
               {

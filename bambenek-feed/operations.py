@@ -78,21 +78,23 @@ def validate_response(response, health_call=False):
                     response_content.decode('utf-8') if isinstance(response_content, bytes) else response_content)
                 reader = csv.reader(input_file, delimiter=",", quotechar='"')
                 return reader
+        else:
+            raise ConnectorError(
+                'Fail To request API {0} response is : {1}'.format(str(response.url), str(response.text)))
     except Exception as e:
-        logger.exception('Fail To request API {0} response is : {1}'.
-                         format(str(response.url), str(response.content)))
         raise ConnectorError(str(e))
 
 
 def _get_config(config):
     try:
         server_url = config.get('server_url').strip('/')
-        username = config.get("username")
-        password = config.get("password")
+        license_type = config.get('license_type')
+        username = config.get("username", None)
+        password = config.get("password", None)
         verify_ssl = config.get("verify_ssl", True)
         if server_url[:7] != 'http://' and server_url[:8] != 'https://':
             server_url = 'https://{}'.format(str(server_url))
-        return server_url, username, password, verify_ssl
+        return server_url, license_type, username, password, verify_ssl
     except Exception as Err:
         raise ConnectorError(Err)
 
@@ -105,10 +107,14 @@ def create_basic_auth(username, password):
 
 
 def make_request(config, endpoint, parameters=None, method='GET', health_call=False):
-    server_url, username, password, verify_ssl = _get_config(config)
+    server_url, license_type, username, password, verify_ssl = _get_config(config)
+    headers = {}
     url = endpoint.format(server_url=server_url)
+    if license_type == 'Commercial':
+        headers = create_basic_auth(username, password)
+    else:
+        url = url.replace('/dga/', '/')
     logger.debug('url: {}'.format(url))
-    headers = create_basic_auth(username, password)
     try:
         api_response = requests.request(method=method, url=url, params=parameters, verify=verify_ssl, headers=headers)
         return validate_response(api_response, health_call=health_call)
@@ -135,22 +141,19 @@ def convert_to_json(data, feed_name):
 
 
 def fetch_indicators(config, params):
-    try:
-        feed_family_type = params.get('feed_family_types')
-        high_confidence = params.get('high_confidence', False)
-        feed_name = ('High-Confidence ' if high_confidence else '') + '{feed_family_type}'.format(
-            feed_family_type=feed_family_type)
-        url = '{feed_type}'.format(feed_type=FEED_MAPPING.get(feed_name).get('url'))
-        api_response = make_request(config, url)
-        result = convert_to_json(api_response, feed_name)
-        return result
-    except Exception as e:
-        raise ConnectorError(str(e))
+    feed_family_type = params.get('feed_family_types')
+    high_confidence = params.get('high_confidence', False)
+    feed_name = ('High-Confidence ' if high_confidence else '') + '{feed_family_type}'.format(
+        feed_family_type=feed_family_type)
+    url = '{feed_type}'.format(feed_type=FEED_MAPPING.get(feed_name).get('url'))
+    api_response = make_request(config, url)
+    result = convert_to_json(api_response, feed_name)
+    return result
 
 
 def _check_health(config):
     try:
-        url = '{service}'.format(service=FEED_MAPPING.get('High-Confidence C2 All Indicator').get('url'))
+        url = '{service}'.format(service=FEED_MAPPING.get('C2 IP').get('url'))
         api_response = make_request(config, url, health_call=True)
         if api_response:
             return True
