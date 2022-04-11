@@ -7,7 +7,7 @@
   "cs_compatible": true,
   "version": "1.0.0",
   "category": "Threat Intelligence",
-  "help_online": "",
+  "help_online": "https://docs.fortinet.com/document/fortisoar/1.0.0/bambenek-feed/251/bambenek-feed-v1-0-0",
   "icon_small_name": "Bambenek_Feed_32x32.png",
   "icon_large_name": "Bambenek_Feed_80x80.png",
   "ingestion_supported": true,
@@ -34,7 +34,7 @@
         "visible": true,
         "placeholder": "https://faf.bambenekconsulting.com",
         "value": "https://faf.bambenekconsulting.com",
-        "description": "Server URL of the Bambenek Feed Security server to which you will connect and perform the automated operations."
+        "description": "Review the server URL of the Bambenek Feed server to which you will connect and retrieve data."
       },
       {
         "title": "License Type",
@@ -57,7 +57,7 @@
               "visible": true,
               "type": "text",
               "name": "username",
-              "description": "Username to access the Bambenek server to which you will connect and perform the automated operations."
+              "description": "Username to access the Bambenek server to which you will connect and retrieve data."
             },
             {
               "title": "Password",
@@ -66,11 +66,11 @@
               "visible": true,
               "type": "password",
               "name": "password",
-              "description": "Password to access the Bambenek server to which you will connect and perform the automated operations."
+              "description": "Password to access the Bambenek server to which you will connect and retrieve data."
             }
           ]
         },
-        "description": "Select license type to fetch Bambenek feeds and perform the automated operations."
+        "description": "Select the license type to be used to fetch Bambenek Feeds and perform the automated operations. You can choose between Commercial or Non-Commercial."
       },
       {
         "title": "Verify SSL",
@@ -80,7 +80,7 @@
         "editable": true,
         "visible": true,
         "value": true,
-        "description": "Specifies whether the SSL certificate for the server is to be verified or not. By default, this option is set as True."
+        "description": "Specifies whether the SSL certificate for the server is to be verified or not."
       }
     ]
   },
@@ -90,7 +90,7 @@
       "title": "Fetch Indicators",
       "category": "investigation",
       "annotation": "fetch_indicators",
-      "description": "Fetches the Threat Intel Feeds using the feeds family type that you have specified as the \"Feed Family Type\" parameter of Bambenek.",
+      "description": "Fetches the Threat Intel Feeds from Bambenek using the Feeds Family type you have specified.",
       "parameters": [
         {
           "title": "High-Confidence Families Only",
@@ -115,8 +115,8 @@
                   "C2 IP",
                   "C2 All Indicator"
                 ],
-                "tooltip": "Note: Supported feed family types for Non-Commercial license: C2 IP, C2 Domain",
-                "description": "Select Bambenek feed family type to fetch specific feed listed IPs/domain. You can choose between DGA Domain, C2 All Indicator, C2 Domain, C2 IP. Note: Supported feed family types for Non-Commercial license: C2 IP, C2 Domain."
+                "tooltip": "Note: Supported feed family types for Non-Commercial licenses are C2 IP and C2 Domain.",
+                "description": "Select the feed family type that you want to retrieve from Bambenek. If you have selected the High-Confidence Families Only option (set to true), then you can choose from the following types: DGA Domain, C2 All Indicator, C2 Domain, or C2 IP."
               }
             ],
             "false": [
@@ -136,13 +136,13 @@
                   "Malware Domain",
                   "Sinkhole"
                 ],
-                "tooltip": "Note: Supported feed family types for Non-Commercial license: C2 IP, C2 Domain",
-                "description": "Select Bambenek feed family type to fetch specific feed listed IPs/domain. You can choose between DGA Domain, C2 All Indicator, C2 Domain, C2 IP, Phishing Domain and Malware Domain. Note: Supported feed family types for Non-Commercial license: C2 IP, C2 Domain."
+                "tooltip": "Note: Supported feed family types for Non-Commercial licenses are C2 IP and C2 Domain.",
+                "description": "Select Bambenek feed family type to fetch specific feed listed IPs/domain. If you have cleared the High-Confidence Families Only option (set to false), then you can choose from the following types: DGA Domain, C2 All Indicator, C2 Domain, C2 IP, Phishing Domain, Malware Domain, or Sinkhole."
               }
             ]
           },
-          "tooltip": "Set High-Confidence Families Only to true if you want to fetch specific Bambenek feed family type as high confidence IPs/domain. When Feed Family Type set to DGA Domain and High-Confidence Families Only set to True then it will fetch \"High-Confidence DGA Domain Feed\".",
-          "description": "Set High-Confidence Families Only to true if you want to fetch specific Bambenek feed family type as high confidence IPs/domain. When Feed Family Type set to DGA Domain and High-Confidence Families Only set to True then it will fetch \"High-Confidence DGA Domain Feed\"."
+          "tooltip": "Select this option if you want to fetch specific Bambenek feed family types as high confidence IPs/domain. For example, if you select DGA Domain as the feed family type and select the High-Confidence Families Only option, then this operation fetches \"High-Confidence DGA Domain Feeds\" from Bambenek.",
+          "description": "Select the feed family type that you want to retrieve from Bambenek. For example, if you select DGA Domain as the feed family type and select the High-Confidence Families Only option, then this operation fetches \"High-Confidence DGA Domain Feeds\" from Bambenek."
         }
       ],
       "enabled": true,
