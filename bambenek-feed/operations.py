@@ -88,13 +88,14 @@ def validate_response(response, health_call=False):
 def _get_config(config):
     try:
         server_url = config.get('server_url').strip('/')
-        license_type = config.get('license_type')
         username = config.get("username", None)
         password = config.get("password", None)
         verify_ssl = config.get("verify_ssl", True)
         if server_url[:7] != 'http://' and server_url[:8] != 'https://':
             server_url = 'https://{}'.format(str(server_url))
-        return server_url, license_type, username, password, verify_ssl
+        if (username and not password) or (password and not username):
+            raise ConnectorError("Provide both Username and Password")
+        return server_url, username, password, verify_ssl
     except Exception as Err:
         raise ConnectorError(Err)
 
@@ -107,13 +108,11 @@ def create_basic_auth(username, password):
 
 
 def make_request(config, endpoint, parameters=None, method='GET', health_call=False):
-    server_url, license_type, username, password, verify_ssl = _get_config(config)
+    server_url, username, password, verify_ssl = _get_config(config)
     headers = {}
     url = endpoint.format(server_url=server_url)
-    if license_type == 'Commercial':
+    if username and password:
         headers = create_basic_auth(username, password)
-    else:
-        url = url.replace('/dga/', '/')
     logger.debug('url: {}'.format(url))
     try:
         api_response = requests.request(method=method, url=url, params=parameters, verify=verify_ssl, headers=headers)
@@ -140,15 +139,23 @@ def convert_to_json(data, feed_name):
     return {"generatedAt": generatedAt, "feed": result}
 
 
-def fetch_indicators(config, params):
+def fetch_indicators(config, params, **kwargs):
     feed_family_type = params.get('feed_family_types')
     high_confidence = params.get('high_confidence', False)
+    output_mode = params.get('output_mode')
+    create_pb_id = params.get("create_pb_id")
     feed_name = ('High-Confidence ' if high_confidence else '') + '{feed_family_type}'.format(
         feed_family_type=feed_family_type)
     url = '{feed_type}'.format(feed_type=FEED_MAPPING.get(feed_name).get('url'))
     api_response = make_request(config, url)
     result = convert_to_json(api_response, feed_name)
-    return result
+    if output_mode == 'Create as Feed Records in FortiSOAR':
+        trigger_ingest_playbook(result.get('feed'), create_pb_id, parent_env=kwargs.get('env', {}), batch_size=2000)
+        logger.info("Successfully triggered playbooks to create feed records")
+        return {"generatedAt": result.get('generatedAt'),
+                "message": "Successfully triggered playbooks to create feed records"}
+    else:
+        return result
 
 
 def _check_health(config):

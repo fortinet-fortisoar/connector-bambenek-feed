@@ -13,7 +13,7 @@ class Bambenek(Connector):
     def execute(self, config, operation_name, params, **kwargs):
         try:
             op = operations.get(operation_name)
-            result = op(config, params)
+            result = op(config, params, **kwargs)
             return result
         except Exception as e:
             logger.exception("An exception occurred {}".format(e))

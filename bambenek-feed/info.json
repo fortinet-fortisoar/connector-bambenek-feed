@@ -37,40 +37,22 @@
         "description": "Review the server URL of the Bambenek Feed server to which you will connect and retrieve data."
       },
       {
-        "title": "License Type",
-        "name": "license_type",
-        "type": "select",
-        "required": true,
+        "title": "Username",
+        "required": false,
         "editable": true,
         "visible": true,
-        "options": [
-          "Commercial",
-          "Non-Commercial"
-        ],
-        "value": "Commercial",
-        "onchange": {
-          "Commercial": [
-            {
-              "title": "Username",
-              "required": true,
-              "editable": true,
-              "visible": true,
-              "type": "text",
-              "name": "username",
-              "description": "Username to access the Bambenek server to which you will connect and retrieve data."
-            },
-            {
-              "title": "Password",
-              "required": true,
-              "editable": true,
-              "visible": true,
-              "type": "password",
-              "name": "password",
-              "description": "Password to access the Bambenek server to which you will connect and retrieve data."
-            }
-          ]
-        },
-        "description": "Select the license type to be used to fetch Bambenek Feeds and perform the automated operations. You can choose between Commercial or Non-Commercial."
+        "type": "text",
+        "name": "username",
+        "description": "Username to access the Bambenek server to which you will connect and retrieve data."
+      },
+      {
+        "title": "Password",
+        "required": false,
+        "editable": true,
+        "visible": true,
+        "type": "password",
+        "name": "password",
+        "description": "Password to access the Bambenek server to which you will connect and retrieve data."
       },
       {
         "title": "Verify SSL",
@@ -143,6 +125,34 @@
           },
           "tooltip": "Select this option if you want to fetch specific Bambenek feed family types as high confidence IPs/domain. For example, if you select DGA Domain as the feed family type and select the High-Confidence Families Only option, then this operation fetches \"High-Confidence DGA Domain Feeds\" from Bambenek.",
           "description": "Select the feed family type that you want to retrieve from Bambenek. For example, if you select DGA Domain as the feed family type and select the High-Confidence Families Only option, then this operation fetches \"High-Confidence DGA Domain Feeds\" from Bambenek."
+        },
+        {
+          "title": "Process Response As",
+          "name": "output_mode",
+          "visible": true,
+          "required": false,
+          "editable": true,
+          "type": "select",
+          "options": [
+            "Create as Feed Records in FortiSOAR",
+            "Return as a JSON"
+          ],
+          "value": "Return as a JSON",
+          "tooltip": "Select the method of returning the Feed Data information. You can choose between the data being created as \"Feed records\" in FortiSOAR (the Create as Feed Records in FortiSOAR option) or data being returned in the JSON format (the Return as a JSON option).",
+          "description": "Select the method of returning the Feed Data information. You can choose between the data being created as \"Feed records\" in FortiSOAR (the Create as Feed Records in FortiSOAR option) or data being returned in the JSON format (the Return as a JSON option). \nIf you choose the 'Create as Feed Records in FortiSOAR' option, then in the Record Creation Playbook IRI field, specify the IRI of the playbook that creates feed records in FortiSOAR.",
+          "onchange": {
+            "Create as Feed Records in FortiSOAR": [
+              {
+                "title": "Record Creation Playbook IRI",
+                "description": "Specify the IRI of the playbook that creates feed records in FortiSOAR.",
+                "type": "text",
+                "name": "create_pb_id",
+                "required": true,
+                "editable": true,
+                "visible": true
+              }
+            ]
+          }
         }
       ],
       "enabled": true,
