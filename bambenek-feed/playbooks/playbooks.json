@@ -8,20 +8,21 @@
       "visible": true,
       "image": "Bambenek_Feed_100x100.png",
       "uuid": "c6b6ea5d-d2e7-4b86-8f8f-83e0404bcc69",
-      "id": 120,
+      "id": 54,
       "createUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
-      "createDate": 1649310533.292884,
+      "createDate": 1651486399.215703,
       "modifyUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
-      "modifyDate": 1649310533.292884,
-      "recordTags": [],
+      "modifyDate": 1651486399.215703,
       "deletedAt": null,
+      "importedBy": [],
+      "recordTags": [],
       "workflows": [
         {
           "@type": "Workflow",
           "triggerLimit": null,
           "name": "Bambenek Feed > Ingest",
           "aliasName": null,
-          "tag": null,
+          "tag": "#Bambenek Feed",
           "description": "Fetches the Threat Intel Feeds using the feeds family type from the Bambenek service.",
           "isActive": false,
           "debug": false,
@@ -143,30 +144,21 @@
           "routes": [
             {
               "@type": "WorkflowRoute",
-              "name": "Get Macro Value -> Extract Value from Response",
-              "targetStep": "/api/3/workflow_steps/4f8af9bf-55d3-4a83-9f6b-28ac26f9b2bc",
-              "sourceStep": "/api/3/workflow_steps/3cb07565-4f3f-4230-9ad1-18f89d812906",
-              "label": null,
-              "isExecuted": false,
-              "uuid": "e397e0ed-1607-41da-a044-3047d7870e74"
-            },
-            {
-              "@type": "WorkflowRoute",
-              "name": "Configuration -> Get Macro Value",
-              "targetStep": "/api/3/workflow_steps/3cb07565-4f3f-4230-9ad1-18f89d812906",
-              "sourceStep": "/api/3/workflow_steps/53f346df-1c89-4fc2-bd15-8ac2abf5b1d5",
-              "label": null,
-              "isExecuted": false,
-              "uuid": "a97cd6c8-1ce3-47ad-b7fe-937e0a535a56"
-            },
-            {
-              "@type": "WorkflowRoute",
               "name": "Start -> Configuration",
               "targetStep": "/api/3/workflow_steps/53f346df-1c89-4fc2-bd15-8ac2abf5b1d5",
               "sourceStep": "/api/3/workflow_steps/c57eacf8-d4c9-43cd-9ddf-09da96a62e5c",
               "label": null,
               "isExecuted": false,
               "uuid": "13a2d14a-7451-493e-8155-53d4e9d2219f"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Fetch indicators -> Update Pull Time",
+              "targetStep": "/api/3/workflow_steps/e362a6a7-d8f9-4b3b-b244-bf933d00c3b7",
+              "sourceStep": "/api/3/workflow_steps/e4c793a2-603e-4427-9fe9-602ad3bb32e7",
+              "label": null,
+              "isExecuted": false,
+              "uuid": "8d793e65-01ca-4724-90ca-e709baccdf70"
             },
             {
               "@type": "WorkflowRoute",
@@ -179,37 +171,47 @@
             },
             {
               "@type": "WorkflowRoute",
-              "name": "Fetch indicators -> Update Pull Time",
-              "targetStep": "/api/3/workflow_steps/e362a6a7-d8f9-4b3b-b244-bf933d00c3b7",
-              "sourceStep": "/api/3/workflow_steps/e4c793a2-603e-4427-9fe9-602ad3bb32e7",
+              "name": "Configuration -> Get Macro Value",
+              "targetStep": "/api/3/workflow_steps/3cb07565-4f3f-4230-9ad1-18f89d812906",
+              "sourceStep": "/api/3/workflow_steps/53f346df-1c89-4fc2-bd15-8ac2abf5b1d5",
               "label": null,
               "isExecuted": false,
-              "uuid": "8d793e65-01ca-4724-90ca-e709baccdf70"
+              "uuid": "a97cd6c8-1ce3-47ad-b7fe-937e0a535a56"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Get Macro Value -> Extract Value from Response",
+              "targetStep": "/api/3/workflow_steps/4f8af9bf-55d3-4a83-9f6b-28ac26f9b2bc",
+              "sourceStep": "/api/3/workflow_steps/3cb07565-4f3f-4230-9ad1-18f89d812906",
+              "label": null,
+              "isExecuted": false,
+              "uuid": "e397e0ed-1607-41da-a044-3047d7870e74"
             }
           ],
           "priority": "/api/3/picklists/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
           "uuid": "b4665f0d-0711-4714-b851-aae587fe8bb5",
+          "id": 571,
+          "createUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
+          "createDate": 1651486399.21781,
+          "modifyUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
+          "modifyDate": 1651496647.266307,
+          "owners": [],
+          "isPrivate": false,
+          "deletedAt": null,
+          "importedBy": [],
           "recordTags": [
             "dataingestion",
             "ingest",
             "Bambenek",
             "bambenek-feed"
-          ],
-          "id": "1087",
-          "createUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
-          "createDate": 1649310533.294765,
-          "modifyUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
-          "modifyDate": 1649310533.294765,
-          "owners": [],
-          "isPrivate": false,
-          "deletedAt": null
+          ]
         },
         {
           "@type": "Workflow",
           "triggerLimit": null,
           "name": "> Bambenek Feed > Fetch",
           "aliasName": null,
-          "tag": null,
+          "tag": "#Bambenek Feed",
           "description": "Fetches the Threat Intel Feeds from Bambenek using the Feeds Family type you have specified.",
           "isActive": false,
           "debug": false,
@@ -217,7 +219,7 @@
           "remoteExecutableFlag": false,
           "parameters": [],
           "synchronous": false,
-          "lastModifyDate": 1649311864,
+          "lastModifyDate": 1652161686,
           "collection": "/api/3/workflow_collections/c6b6ea5d-d2e7-4b86-8f8f-83e0404bcc69",
           "versions": [],
           "triggerStep": "/api/3/workflow_steps/de0fa24a-987e-4652-9d0a-0816ba5d7f99",
@@ -243,7 +245,7 @@
                 "new_fetch_time": "{{arrow.get(vars.steps.Fetch_Indicators.data.generatedAt).shift(minutes=+60).format('YYYY-MM-DD HH:mm')}}"
               },
               "status": null,
-              "top": "720",
+              "top": "600",
               "left": "100",
               "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
               "uuid": "23d69a69-e720-4f41-a593-b4dbfc752464"
@@ -406,41 +408,6 @@
             },
             {
               "@type": "WorkflowStep",
-              "name": "Create Record",
-              "description": null,
-              "arguments": {
-                "for_each": {
-                  "item": "{{vars.steps.Fetch_Indicators.data.feed}}",
-                  "__bulk": true,
-                  "parallel": false,
-                  "condition": "",
-                  "batch_size": 100
-                },
-                "resource": {
-                  "tLP": "{% if vars.tlp %}{{ vars.tlp | resolveRange(vars.tlp_map)}}{% endif %}",
-                  "value": "{{vars.item.value}}",
-                  "source": "Bambenek Feed",
-                  "created": "{{vars.item[\"date_created\"] if vars.item[\"date_created\"] else None}}",
-                  "__replace": "",
-                  "expiresOn": "{{ arrow.get().int_timestamp + (vars.expiry | int)*24*60*60 }}",
-                  "confidence": "{% if vars.confidence %}{{ vars.confidence }}{% else %}{{ vars.item.labels[2].split(\"-\")[-1] }}{% endif %}",
-                  "reputation": "{% if vars.reputation %}{{ vars.reputation | resolveRange(vars.reputation_map)}}{% else %}{{ vars.item.labels[1].split(\"-\")[-1] | resolveRange(vars.reputation_map) }}{% endif %}",
-                  "sourceData": "{{vars.item | toJSON}}",
-                  "description": "<p>{{vars.item.description}}</p>"
-                },
-                "_showJson": false,
-                "collection": "/api/ingest-feeds/threat_intel_feeds",
-                "__recommend": [],
-                "step_variables": []
-              },
-              "status": null,
-              "top": "600",
-              "left": "100",
-              "stepType": "/api/3/workflow_step_types/7b221880-716b-4726-a2ca-5e568d330b3e",
-              "uuid": "bb6dc3a4-7cbd-43f8-ae8e-104b2fbd6a24"
-            },
-            {
-              "@type": "WorkflowStep",
               "name": "Return Malware Domain Sample Data",
               "description": null,
               "arguments": {
@@ -460,6 +427,8 @@
                 "name": "Bambenek Feed",
                 "config": "55b01a34-efbd-4773-a663-b6b4e12a53b6",
                 "params": {
+                  "output_mode": "Create as Feed Records in FortiSOAR",
+                  "create_pb_id": "f2b497e2-a494-4c55-bdeb-cc29e98f8888",
                   "high_confidence": "{{vars.high_confidence}}",
                   "feed_family_types": "{{vars.feed_family_types}}"
                 },
@@ -517,24 +486,6 @@
               "label": "C2 All Indicator",
               "isExecuted": false,
               "uuid": "b4c55bdf-db99-42e0-b47c-86256383cf74"
-            },
-            {
-              "@type": "WorkflowRoute",
-              "name": "Fetch Indicators -> Create Record",
-              "targetStep": "/api/3/workflow_steps/bb6dc3a4-7cbd-43f8-ae8e-104b2fbd6a24",
-              "sourceStep": "/api/3/workflow_steps/c9574acd-218f-497c-8f26-e7b97ee1657a",
-              "label": null,
-              "isExecuted": false,
-              "uuid": "5bbac4c8-b381-4b2b-86d1-7b00dc14fa45"
-            },
-            {
-              "@type": "WorkflowRoute",
-              "name": "Create Record -> Result",
-              "targetStep": "/api/3/workflow_steps/23d69a69-e720-4f41-a593-b4dbfc752464",
-              "sourceStep": "/api/3/workflow_steps/bb6dc3a4-7cbd-43f8-ae8e-104b2fbd6a24",
-              "label": null,
-              "isExecuted": false,
-              "uuid": "c292104f-66b4-449d-a540-80c0cd04293b"
             },
             {
               "@type": "WorkflowRoute",
@@ -625,25 +576,34 @@
               "label": "No, For Ingestion",
               "isExecuted": false,
               "uuid": "e68ee537-0bbd-48ba-a4d0-88bf6ba172b3"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Fetch Indicators -> Result",
+              "targetStep": "/api/3/workflow_steps/23d69a69-e720-4f41-a593-b4dbfc752464",
+              "sourceStep": "/api/3/workflow_steps/c9574acd-218f-497c-8f26-e7b97ee1657a",
+              "label": null,
+              "isExecuted": false,
+              "uuid": "589b8139-7323-4683-80da-05babbb7ede4"
             }
           ],
           "priority": "/api/3/picklists/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
           "uuid": "d02f8208-2bd4-4d6c-91d6-89d64ad30b1f",
+          "id": 572,
+          "createUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
+          "createDate": 1651486399.219123,
+          "modifyUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
+          "modifyDate": 1652161682.418409,
+          "owners": [],
+          "isPrivate": false,
+          "deletedAt": null,
+          "importedBy": [],
           "recordTags": [
             "dataingestion",
-            "create",
             "fetch",
             "Bambenek",
             "bambenek-feed"
-          ],
-          "id": "1088",
-          "createUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
-          "createDate": 1649310533.295916,
-          "modifyUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
-          "modifyDate": 1649311864.168541,
-          "owners": [],
-          "isPrivate": false,
-          "deletedAt": null
+          ]
         },
         {
           "@type": "Workflow",
@@ -658,7 +618,7 @@
           "remoteExecutableFlag": false,
           "parameters": [],
           "synchronous": false,
-          "lastModifyDate": 1649308603,
+          "lastModifyDate": 1652162835,
           "collection": "/api/3/workflow_collections/c6b6ea5d-d2e7-4b86-8f8f-83e0404bcc69",
           "versions": [],
           "triggerStep": "/api/3/workflow_steps/13ce714f-14be-4e88-aa9b-ae5410d5f16b",
@@ -696,6 +656,7 @@
                 "name": "Bambenek Feed",
                 "config": "55b01a34-efbd-4773-a663-b6b4e12a53b6",
                 "params": {
+                  "output_mode": "Return as a JSON",
                   "high_confidence": false,
                   "feed_family_types": "Phishing Domain"
                 },
@@ -727,18 +688,175 @@
           ],
           "priority": null,
           "uuid": "e4ab342e-46ef-4877-a426-06268179d4df",
+          "id": 573,
+          "createUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
+          "createDate": 1651486399.220276,
+          "modifyUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
+          "modifyDate": 1652162831.423367,
+          "owners": [],
+          "isPrivate": false,
+          "deletedAt": null,
+          "importedBy": [],
           "recordTags": [
             "Bambenek",
             "bambenek-feed"
+          ]
+        },
+        {
+          "@type": "Workflow",
+          "triggerLimit": null,
+          "name": "> Bambenek Feed > Create",
+          "aliasName": null,
+          "tag": "#Bambenek Feed",
+          "description": "Fetches the Threat Intel Feeds from Bambenek using the Feeds Family type you have specified.",
+          "isActive": false,
+          "debug": false,
+          "singleRecordExecution": false,
+          "remoteExecutableFlag": false,
+          "parameters": [
+            "ingestedData"
           ],
-          "id": "1089",
-          "createUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
-          "createDate": 1649310533.2969,
-          "modifyUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
-          "modifyDate": 1649310533.2969,
+          "synchronous": false,
+          "lastModifyDate": 1652163021,
+          "collection": "/api/3/workflow_collections/c6b6ea5d-d2e7-4b86-8f8f-83e0404bcc69",
+          "versions": [],
+          "triggerStep": "/api/3/workflow_steps/4cc9a18e-2f5c-41d7-9593-d0f21c1a182b",
+          "steps": [
+            {
+              "@type": "WorkflowStep",
+              "name": "Start",
+              "description": null,
+              "arguments": {
+                "step_variables": {
+                  "input": {
+                    "params": []
+                  }
+                }
+              },
+              "status": null,
+              "top": "30",
+              "left": "125",
+              "stepType": "/api/3/workflow_step_types/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+              "uuid": "4cc9a18e-2f5c-41d7-9593-d0f21c1a182b"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Configuration",
+              "description": null,
+              "arguments": {
+                "tlp": "White",
+                "expiry": "7",
+                "tlp_map": "{'Red': {{'TrafficLightProtocol'| picklist('Red') }}, 'Amber': {{'TrafficLightProtocol'| picklist('Amber') }}, 'Green': {{'TrafficLightProtocol'| picklist('Green') }}, 'White': {{'TrafficLightProtocol'| picklist('White') }}}",
+                "confidence": "50",
+                "reputation": "Suspicious",
+                "reputation_map": "{'Good': {{'IndicatorReputation'| picklist('Good') }}, 'Malicious': {{'IndicatorReputation'| picklist('Malicious') }}, 'Suspicious': {{'IndicatorReputation'| picklist('Suspicious') }}, 'TBD': {{'IndicatorReputation'| picklist('TBD') }}, 'No Reputation Available': {{'IndicatorReputation'| picklist('No Reputation Available') }}}",
+                "threat_intel_feeds_tLP_map": "{}",
+                "threat_intel_feeds_reputation_map": "{}",
+                "threat_intel_feeds_typeOfFeed_map": "{}"
+              },
+              "status": null,
+              "top": "165",
+              "left": "125",
+              "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+              "uuid": "697ed340-b698-40a1-8390-89e3d608f829"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Create Record",
+              "description": null,
+              "arguments": {
+                "for_each": {
+                  "item": "{{vars.input.params.ingestedData}}",
+                  "__bulk": true,
+                  "parallel": false,
+                  "condition": "",
+                  "batch_size": null
+                },
+                "resource": {
+                  "tLP": "{{vars.tlp_resolved}}",
+                  "value": "{{vars.item.value}}",
+                  "source": "Bambenek Feed",
+                  "created": "{{vars.item[\"date_created\"] if vars.item[\"date_created\"] else None}}",
+                  "__replace": "",
+                  "expiresOn": "{{vars.expiry_date}}",
+                  "confidence": "{% if vars.confidence %}{{ vars.confidence }}{% else %}{{ vars.item.labels[2].split(\"-\")[-1] }}{% endif %}",
+                  "reputation": "{% if vars.reputation %}{{ vars.reputation | resolveRange(vars.reputation_map)}}{% else %}{{ vars.item.labels[1].split(\"-\")[-1] | resolveRange(vars.reputation_map) }}{% endif %}",
+                  "sourceData": "{{vars.item | toJSON}}",
+                  "typeOfFeed": "/api/3/picklists/18c5c903-eda5-494d-aa7e-f28b479681ac",
+                  "description": "<p>{{vars.item.description}}</p>"
+                },
+                "_showJson": false,
+                "collection": "/api/ingest-feeds/threat_intel_feeds",
+                "__recommend": [],
+                "step_variables": []
+              },
+              "status": null,
+              "top": "435",
+              "left": "125",
+              "stepType": "/api/3/workflow_step_types/7b221880-716b-4726-a2ca-5e568d330b3e",
+              "uuid": "8a683abb-9ff8-49e6-84bd-82ffc65eef7a"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Resolve Range",
+              "description": null,
+              "arguments": {
+                "expiry_date": "{{arrow.get().int_timestamp + (vars.expiry | int)*24*60*60 }}",
+                "tlp_resolved": "{% if vars.tlp %}{{ vars.tlp | resolveRange(vars.tlp_map)}}{% endif %}"
+              },
+              "status": null,
+              "top": "300",
+              "left": "125",
+              "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+              "uuid": "b5a9776d-3e20-4b25-a2b8-7f39fbf981e2"
+            }
+          ],
+          "routes": [
+            {
+              "@type": "WorkflowRoute",
+              "name": "Start -> Configuration",
+              "targetStep": "/api/3/workflow_steps/697ed340-b698-40a1-8390-89e3d608f829",
+              "sourceStep": "/api/3/workflow_steps/4cc9a18e-2f5c-41d7-9593-d0f21c1a182b",
+              "label": null,
+              "isExecuted": false,
+              "uuid": "04b633cf-432b-4318-a278-ebe6f67b9705"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Resolve Range -> Create Record",
+              "targetStep": "/api/3/workflow_steps/8a683abb-9ff8-49e6-84bd-82ffc65eef7a",
+              "sourceStep": "/api/3/workflow_steps/b5a9776d-3e20-4b25-a2b8-7f39fbf981e2",
+              "label": null,
+              "isExecuted": false,
+              "uuid": "d73f1b26-6b81-419d-80e2-befb5410e94c"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Configuration -> Resolve Range",
+              "targetStep": "/api/3/workflow_steps/b5a9776d-3e20-4b25-a2b8-7f39fbf981e2",
+              "sourceStep": "/api/3/workflow_steps/697ed340-b698-40a1-8390-89e3d608f829",
+              "label": null,
+              "isExecuted": false,
+              "uuid": "da5658b2-1f3b-4e54-8339-a044fd8b6eef"
+            }
+          ],
+          "priority": "/api/3/picklists/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+          "uuid": "f2b497e2-a494-4c55-bdeb-cc29e98f8888",
+          "id": 982,
+          "createUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
+          "createDate": 1652096147.761572,
+          "modifyUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
+          "modifyDate": 1652163017.769854,
           "owners": [],
           "isPrivate": false,
-          "deletedAt": null
+          "deletedAt": null,
+          "importedBy": [],
+          "recordTags": [
+            "dataingestion",
+            "create",
+            "Bambenek",
+            "bambenek-feed"
+          ]
         }
       ]
     }
@@ -748,7 +866,7 @@
     "ingest",
     "Bambenek",
     "bambenek-feed",
-    "create",
-    "fetch"
+    "fetch",
+    "create"
   ]
 }
