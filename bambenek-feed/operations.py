@@ -139,6 +139,12 @@ def convert_to_json(data, feed_name):
     return {"generatedAt": generatedAt, "feed": result}
 
 
+def filter_duplicate(data):
+    seen = set()
+    filtered_data = [x for x in data if [x['value'] not in seen, seen.add(x['value'])][0]]
+    return filtered_data
+
+
 def fetch_indicators(config, params, **kwargs):
     feed_family_type = params.get('feed_family_types')
     high_confidence = params.get('high_confidence', False)
@@ -150,6 +156,8 @@ def fetch_indicators(config, params, **kwargs):
     api_response = make_request(config, url)
     result = convert_to_json(api_response, feed_name)
     if output_mode == 'Create as Feed Records in FortiSOAR':
+        filtered_data = filter_duplicate(result.get('feed'))
+        result['feed'] = filtered_data
         trigger_ingest_playbook(result.get('feed'), create_pb_id, parent_env=kwargs.get('env', {}), batch_size=2000)
         logger.info("Successfully triggered playbooks to create feed records")
         return {"generatedAt": result.get('generatedAt'),
