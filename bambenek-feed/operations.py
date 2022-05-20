@@ -15,7 +15,7 @@ import time
 import arrow
 
 try:
-    from integrations.crudhub import trigger_ingest_playbook
+    from integrations.crudhub import make_request
 except:
     # ignore. lower FSR version
     pass
@@ -49,11 +49,11 @@ FEED_MAPPING = {
         "fields": ["value", "description", "date_created", "manpage"]},
     "Phishing Domain": {
         "url": '{server_url}/feeds/maldomainml/phishing-master.txt',
-        "fields": ["hostname", "registered_domain", "ipv4_address", "asn", "netblock", "description",
-                   "ASN or netblock are pipe delimieted"]},
+        "fields": ["value", "registered_domain", "ipv4_address", "asn", "netblock", "description",
+                   "ASN_or_netblock"]},
     "Malware Domain": {
         "url": '{server_url}/feeds/maldomainml/malware-master.txt',
-        "fields": ["hostname", "registered_domain", "ipv4_address", "asn", "netblock", "description",
+        "fields": ["value", "registered_domain", "ipv4_address", "asn", "netblock", "description",
                    "ASN_or_netblock"]},
     "Sinkhole": {
         "url": '{server_url}/feeds/sinkhole/latest.csv',
@@ -107,7 +107,7 @@ def create_basic_auth(username, password):
     return headers
 
 
-def make_request(config, endpoint, parameters=None, method='GET', health_call=False):
+def _api_request(config, endpoint, parameters=None, method='GET', health_call=False):
     server_url, username, password, verify_ssl = _get_config(config)
     headers = {}
     url = endpoint.format(server_url=server_url)
@@ -139,10 +139,35 @@ def convert_to_json(data, feed_name):
     return {"generatedAt": generatedAt, "feed": result}
 
 
-def filter_duplicate(data):
-    seen = set()
-    filtered_data = [x for x in data if [x['value'] not in seen, seen.add(x['value'])][0]]
-    return filtered_data
+def trigger_ingest_playbook(records, playbook_uuid, playbook_input_param="ingestedData", parent_env={},
+                            batch_size=1000, pb_params={},
+                            dedup_field=None):
+    if dedup_field:
+        seen = set()
+        records = [x for x in records if
+                   [x[dedup_field].replace(" ", "") not in seen, seen.add(x[dedup_field].replace(" ", ""))][0]]
+    url = "/api/triggers/1/notrigger/" + playbook_uuid
+    method = "POST"
+    parent_wf = parent_env.get('wf_id')
+    parent_step = parent_env.get('step_id')
+    try:
+        for start_index in range(0, len(records), batch_size):
+            env = {playbook_input_param: records[start_index: start_index + batch_size]}
+            if pb_params:
+                env.update(pb_params)
+            payload = {
+                "priority": {"itemValue": "Low"},
+                "_eval_input_params_from_env": True,
+                "env": env
+            }
+            if parent_wf:
+                payload['parent_wf'] = parent_wf
+            if parent_step:
+                payload['step_id'] = parent_step
+            make_request(url, method, body=payload)
+    except Exception as e:
+        logger.error("Failed to insert a batch of feeds with error: " + str(e))
+        raise ConnectorError("Failed to insert a batch of feeds with error: " + str(e))
 
 
 def fetch_indicators(config, params, **kwargs):
@@ -153,12 +178,12 @@ def fetch_indicators(config, params, **kwargs):
     feed_name = ('High-Confidence ' if high_confidence else '') + '{feed_family_type}'.format(
         feed_family_type=feed_family_type)
     url = '{feed_type}'.format(feed_type=FEED_MAPPING.get(feed_name).get('url'))
-    api_response = make_request(config, url)
+    api_response = _api_request(config, url)
     result = convert_to_json(api_response, feed_name)
     if output_mode == 'Create as Feed Records in FortiSOAR':
-        filtered_data = filter_duplicate(result.get('feed'))
-        result['feed'] = filtered_data
-        trigger_ingest_playbook(result.get('feed'), create_pb_id, parent_env=kwargs.get('env', {}), batch_size=2000)
+        pb_params = {'data': {'feed_family_type': feed_family_type}}
+        trigger_ingest_playbook(result.get('feed'), create_pb_id, parent_env=kwargs.get('env', {}), batch_size=2000,
+                                pb_params=pb_params.get('data', {}), dedup_field='value')
         logger.info("Successfully triggered playbooks to create feed records")
         return {"generatedAt": result.get('generatedAt'),
                 "message": "Successfully triggered playbooks to create feed records"}
@@ -169,7 +194,7 @@ def fetch_indicators(config, params, **kwargs):
 def _check_health(config):
     try:
         url = '{service}'.format(service=FEED_MAPPING.get('C2 IP').get('url'))
-        api_response = make_request(config, url, health_call=True)
+        api_response = _api_request(config, url, health_call=True)
         if api_response:
             return True
     except Exception as e:
