@@ -30,11 +30,50 @@
           "remoteExecutableFlag": false,
           "parameters": [],
           "synchronous": false,
-          "lastModifyDate": 1649245584,
+          "lastModifyDate": 1653463483,
           "collection": "/api/3/workflow_collections/c6b6ea5d-d2e7-4b86-8f8f-83e0404bcc69",
           "versions": [],
           "triggerStep": "/api/3/workflow_steps/c57eacf8-d4c9-43cd-9ddf-09da96a62e5c",
           "steps": [
+            {
+              "@type": "WorkflowStep",
+              "name": "Is data only for mapping",
+              "description": null,
+              "arguments": {
+                "conditions": [
+                  {
+                    "option": "Yes, For Mapping",
+                    "step_iri": "/api/3/workflow_steps/e4c793a2-603e-4427-9fe9-602ad3bb32e7",
+                    "condition": "{{ vars.request.env_setup == true }}",
+                    "step_name": "Fetch indicators"
+                  },
+                  {
+                    "option": "No, For Ingestion",
+                    "default": true,
+                    "step_iri": "/api/3/workflow_steps/56eff50e-cb2f-46eb-841b-e02792a8d585",
+                    "step_name": "Fetch and Create"
+                  }
+                ]
+              },
+              "status": null,
+              "top": "570",
+              "left": "300",
+              "stepType": "/api/3/workflow_step_types/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+              "uuid": "07212861-6759-4662-a02d-70f3e368a0e3"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Result",
+              "description": null,
+              "arguments": {
+                "new_fetch_time": "{{arrow.get(vars.steps.Fetch_and_Create.data.generatedAt).shift(minutes=+60).format('YYYY-MM-DD HH:mm') if vars.steps.Fetch_and_Create.data.generatedAt else 0}}"
+              },
+              "status": null,
+              "top": "840",
+              "left": "125",
+              "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+              "uuid": "218e5dff-3b2a-461e-a1df-2c50f78f7eb2"
+            },
             {
               "@type": "WorkflowStep",
               "name": "Get Macro Value",
@@ -53,7 +92,7 @@
               },
               "status": null,
               "top": "300",
-              "left": "125",
+              "left": "300",
               "stepType": "/api/3/workflow_step_types/0109f35d-090b-4a2b-bd8a-94cbc3508562",
               "uuid": "3cb07565-4f3f-4230-9ad1-18f89d812906"
             },
@@ -66,23 +105,60 @@
               },
               "status": null,
               "top": "435",
-              "left": "125",
+              "left": "300",
               "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
               "uuid": "4f8af9bf-55d3-4a83-9f6b-28ac26f9b2bc"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Fetch and Create",
+              "description": null,
+              "arguments": {
+                "name": "Bambenek Feed",
+                "when": "{{arrow.now().format('YYYY-MM-DD HH:mm') >= arrow.get(vars.lastPullTime).format('YYYY-MM-DD HH:mm')}}",
+                "config": "55b01a34-efbd-4773-a663-b6b4e12a53b6",
+                "params": {
+                  "output_mode": "Create as Feed Records in FortiSOAR",
+                  "create_pb_id": "f2b497e2-a494-4c55-bdeb-cc29e98f8888",
+                  "high_confidence": "{{vars.high_confidence}}",
+                  "feed_family_types": "{{vars.feed_family_types}}"
+                },
+                "version": "1.0.0",
+                "connector": "bambenek-feed",
+                "operation": "fetch_indicators",
+                "operationTitle": "Fetch Indicators",
+                "pickFromTenant": false,
+                "step_variables": []
+              },
+              "status": null,
+              "top": "705",
+              "left": "125",
+              "stepType": "/api/3/workflow_step_types/0bfed618-0316-11e7-93ae-92361f002671",
+              "uuid": "56eff50e-cb2f-46eb-841b-e02792a8d585"
             },
             {
               "@type": "WorkflowStep",
               "name": "Configuration",
               "description": null,
               "arguments": {
+                "tlp": "White",
+                "expiry": "7",
                 "fetchTime": "0",
-                "pullTimeMacro": "BambenekFeedLastPullTime_{{vars['audit_info']['cyops_playbook_iri'].split('/')[-1].replace('-','_')}}"
+                "confidence": "50",
+                "reputation": "Suspicious",
+                "pullTimeMacro": "BambenekFeedLastPullTime_{{vars['audit_info']['cyops_playbook_iri'].split('/')[-1].replace('-','_')}}",
+                "reputation_map": "{'Good': {{'IndicatorReputation'| picklist('Good') }}, 'Malicious': {{'IndicatorReputation'| picklist('Malicious') }}, 'Suspicious': {{'IndicatorReputation'| picklist('Suspicious') }}, 'TBD': {{'IndicatorReputation'| picklist('TBD') }}, 'No Reputation Available': {{'IndicatorReputation'| picklist('No Reputation Available') }}}",
+                "high_confidence": "false",
+                "feed_family_types": "Phishing Domain",
+                "threat_intel_feeds_tLP_map": "{}",
+                "threat_intel_feeds_reputation_map": "{}",
+                "threat_intel_feeds_typeOfFeed_map": "{}"
               },
               "status": null,
               "top": "165",
-              "left": "125",
+              "left": "300",
               "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
-              "uuid": "53f346df-1c89-4fc2-bd15-8ac2abf5b1d5"
+              "uuid": "7f1eb4e0-db0e-4b5d-8221-e07c70c4f719"
             },
             {
               "@type": "WorkflowStep",
@@ -92,12 +168,13 @@
                 "step_variables": {
                   "input": {
                     "params": []
-                  }
+                  },
+                  "_configuration_schema": "[\n    {\n      \"title\": \"High-Confidence Families Only\",\n      \"name\": \"high_confidence\",\n      \"visible\": true,\n      \"required\": true,\n      \"editable\": true,\n      \"type\": \"checkbox\",\n      \"value\": false,\n      \"onchange\": {\n        \"true\": [\n          {\n            \"title\": \"Feed Family Type\",\n            \"name\": \"feed_family_types\",\n            \"visible\": true,\n            \"required\": true,\n            \"editable\": true,\n            \"type\": \"select\",\n            \"options\": [\n              \"DGA Domain\",\n              \"C2 Domain\",\n              \"C2 IP\",\n              \"C2 All Indicator\"\n            ],\n            \"description\": \"Select Bambenek feed family type to fetch specific feed listed IPs/domain. You can choose between DGA Domain, C2 All Indicator, C2 Domain, C2 IP.\"\n          }\n        ],\n        \"false\": [\n          {\n            \"title\": \"Feed Family Type\",\n            \"name\": \"feed_family_types\",\n            \"visible\": true,\n            \"required\": true,\n            \"editable\": true,\n            \"type\": \"select\",\n            \"options\": [\n              \"DGA Domain\",\n              \"C2 Domain\",\n              \"C2 IP\",\n              \"C2 All Indicator\",\n              \"Phishing Domain\",\n              \"Malware Domain\",\n              \"Sinkhole\"\n            ],\n            \"description\": \"Select Bambenek feed family type to fetch specific feed listed IPs/domain. You can choose between DGA Domain, C2 All Indicator, C2 Domain, C2 IP, Phishing Domain and Malware Domain.\"\n          }\n        ]\n      },\n      \"tooltip\": \"Set High-Confidence Families Only to true if you want to fetch specific Bambenek feed family type as high confidence IPs/domain.\",\n      \"description\": \"Set High-Confidence Families Only to true if you want to fetch specific Bambenek feed family type as high confidence IPs/domain. When Feed Family Type set to DGA Domain and High-Confidence Families Only set to True then it will fetch High-Confidence DGA Domain feed.\"\n    },\n    {\n      \"title\": \"Confidence\",\n      \"name\": \"confidence\",\n      \"type\": \"integer\",\n      \"tooltip\": \"Default Confidence score to be set for the feeds\",\n      \"required\": false,\n      \"editable\": true,\n      \"visible\": true,\n      \"value\": 50,\n      \"validation\": {\n        \"minlength\": 0,\n        \"maxlength\": 100\n      }\n    },\n    {\n      \"title\": \"Reputation\",\n      \"name\": \"reputation\",\n      \"type\": \"select\",\n      \"tooltip\": \"Default Reputation to be set for the feeds\",\n      \"required\": true,\n      \"editable\": true,\n      \"visible\": true,\n      \"options\": [\n        \"Good\",\n        \"Suspicious\",\n        \"Malicious\",\n        \"No Reputation Available\",\n        \"TBD\"\n      ],\n      \"value\": \"Suspicious\"\n    },\n    {\n      \"title\": \"TLP\",\n      \"name\": \"tlp\",\n      \"type\": \"select\",\n      \"tooltip\": \"Default TLP to be set for the feeds\",\n      \"required\": false,\n      \"editable\": true,\n      \"visible\": true,\n      \"options\": [\n        \"Red\",\n        \"Amber\",\n        \"Green\",\n        \"White\"\n      ],\n      \"value\": \"White\"\n    },\n    {\n      \"title\": \"Maximum Age (in days)\",\n      \"name\": \"expiry\",\n      \"type\": \"integer\",\n      \"tooltip\": \"Default age for the feeds. The indicator expires on 'valid_until' date unless a different expiry is specified here. If specified, the indicator will be marked expired on valid_from + expiry.\",\n      \"required\": false,\n      \"editable\": true,\n      \"visible\": true\n    }\n  ]"
                 }
               },
               "status": null,
               "top": "30",
-              "left": "125",
+              "left": "300",
               "stepType": "/api/3/workflow_step_types/b348f017-9a94-471f-87f8-ce88b6a7ad62",
               "uuid": "c57eacf8-d4c9-43cd-9ddf-09da96a62e5c"
             },
@@ -106,37 +183,38 @@
               "name": "Update Pull Time",
               "description": null,
               "arguments": {
-                "when": "{{vars.steps.Fetch_indicators}}",
+                "when": "{{vars.new_fetch_time}}",
                 "params": {
                   "macro": "{{vars.pullTimeMacro}}",
-                  "value": "{{vars.steps.Fetch_indicators.new_fetch_time}}"
+                  "value": "{{vars.new_fetch_time}}"
                 },
-                "version": "3.2.0",
+                "version": "3.2.1",
                 "connector": "cyops_utilities",
                 "operation": "updatemacro",
                 "operationTitle": "CyOPs: Update Macro",
                 "step_variables": []
               },
               "status": null,
-              "top": "705",
+              "top": "975",
               "left": "125",
               "stepType": "/api/3/workflow_step_types/0109f35d-090b-4a2b-bd8a-94cbc3508562",
               "uuid": "e362a6a7-d8f9-4b3b-b244-bf933d00c3b7"
             },
             {
               "@type": "WorkflowStep",
-              "name": "Fetch indicators",
+              "name": "Data Mapping",
               "description": null,
               "arguments": {
-                "when": "{{arrow.now().format('YYYY-MM-DD HH:mm') >= arrow.get(vars.lastPullTime).format('YYYY-MM-DD HH:mm')}}",
-                "arguments": [],
+                "arguments": {
+                  "feed_family_types": "{{vars.feed_family_types}}"
+                },
                 "apply_async": false,
                 "step_variables": [],
                 "workflowReference": "/api/3/workflows/d02f8208-2bd4-4d6c-91d6-89d64ad30b1f"
               },
               "status": null,
-              "top": "570",
-              "left": "125",
+              "top": "705",
+              "left": "475",
               "stepType": "/api/3/workflow_step_types/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
               "uuid": "e4c793a2-603e-4427-9fe9-602ad3bb32e7"
             }
@@ -144,39 +222,57 @@
           "routes": [
             {
               "@type": "WorkflowRoute",
-              "name": "Start -> Configuration",
-              "targetStep": "/api/3/workflow_steps/53f346df-1c89-4fc2-bd15-8ac2abf5b1d5",
-              "sourceStep": "/api/3/workflow_steps/c57eacf8-d4c9-43cd-9ddf-09da96a62e5c",
-              "label": null,
-              "isExecuted": false,
-              "uuid": "13a2d14a-7451-493e-8155-53d4e9d2219f"
-            },
-            {
-              "@type": "WorkflowRoute",
-              "name": "Fetch indicators -> Update Pull Time",
-              "targetStep": "/api/3/workflow_steps/e362a6a7-d8f9-4b3b-b244-bf933d00c3b7",
-              "sourceStep": "/api/3/workflow_steps/e4c793a2-603e-4427-9fe9-602ad3bb32e7",
-              "label": null,
-              "isExecuted": false,
-              "uuid": "8d793e65-01ca-4724-90ca-e709baccdf70"
-            },
-            {
-              "@type": "WorkflowRoute",
-              "name": "Extract Value from Response -> Fetch indicators",
-              "targetStep": "/api/3/workflow_steps/e4c793a2-603e-4427-9fe9-602ad3bb32e7",
+              "name": "Extract Value from Response -> Is data only for mapping",
+              "targetStep": "/api/3/workflow_steps/07212861-6759-4662-a02d-70f3e368a0e3",
               "sourceStep": "/api/3/workflow_steps/4f8af9bf-55d3-4a83-9f6b-28ac26f9b2bc",
               "label": null,
               "isExecuted": false,
-              "uuid": "a0f2d1b6-261c-48c6-b546-7f2bf3543494"
+              "uuid": "00220b05-e2fe-4667-a7cf-46b6466b6972"
             },
             {
               "@type": "WorkflowRoute",
               "name": "Configuration -> Get Macro Value",
               "targetStep": "/api/3/workflow_steps/3cb07565-4f3f-4230-9ad1-18f89d812906",
-              "sourceStep": "/api/3/workflow_steps/53f346df-1c89-4fc2-bd15-8ac2abf5b1d5",
+              "sourceStep": "/api/3/workflow_steps/7f1eb4e0-db0e-4b5d-8221-e07c70c4f719",
               "label": null,
               "isExecuted": false,
-              "uuid": "a97cd6c8-1ce3-47ad-b7fe-937e0a535a56"
+              "uuid": "270c9c0b-8079-41ef-8f78-938ca68ddeb0"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Fetch and Create -> Result",
+              "targetStep": "/api/3/workflow_steps/218e5dff-3b2a-461e-a1df-2c50f78f7eb2",
+              "sourceStep": "/api/3/workflow_steps/56eff50e-cb2f-46eb-841b-e02792a8d585",
+              "label": null,
+              "isExecuted": false,
+              "uuid": "4474091a-3dce-481a-8d45-e2e6f9291b00"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Result -> Update Pull Time",
+              "targetStep": "/api/3/workflow_steps/e362a6a7-d8f9-4b3b-b244-bf933d00c3b7",
+              "sourceStep": "/api/3/workflow_steps/218e5dff-3b2a-461e-a1df-2c50f78f7eb2",
+              "label": null,
+              "isExecuted": false,
+              "uuid": "4495787c-bd8b-404e-b152-f72a4d4a1b42"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Start -> Copy of Configuration",
+              "targetStep": "/api/3/workflow_steps/7f1eb4e0-db0e-4b5d-8221-e07c70c4f719",
+              "sourceStep": "/api/3/workflow_steps/c57eacf8-d4c9-43cd-9ddf-09da96a62e5c",
+              "label": null,
+              "isExecuted": false,
+              "uuid": "b954bc60-7f03-4b33-ae3f-f084befebfe8"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Is data only for mapping -> Fetch indicators",
+              "targetStep": "/api/3/workflow_steps/e4c793a2-603e-4427-9fe9-602ad3bb32e7",
+              "sourceStep": "/api/3/workflow_steps/07212861-6759-4662-a02d-70f3e368a0e3",
+              "label": "Yes, For Mapping",
+              "isExecuted": false,
+              "uuid": "c09c227e-5c52-488c-9ca5-4a7ca94677a5"
             },
             {
               "@type": "WorkflowRoute",
@@ -186,6 +282,15 @@
               "label": null,
               "isExecuted": false,
               "uuid": "e397e0ed-1607-41da-a044-3047d7870e74"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Is data only for mapping -> Fetch and Create",
+              "targetStep": "/api/3/workflow_steps/56eff50e-cb2f-46eb-841b-e02792a8d585",
+              "sourceStep": "/api/3/workflow_steps/07212861-6759-4662-a02d-70f3e368a0e3",
+              "label": "No, For Ingestion",
+              "isExecuted": false,
+              "uuid": "ecf865c3-fa3b-4276-8734-d6d1b7ab487b"
             }
           ],
           "priority": "/api/3/picklists/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
@@ -193,8 +298,8 @@
           "id": 1574,
           "createUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
           "createDate": 1653370636.320618,
-          "modifyUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
-          "modifyDate": 1653370636.320618,
+          "modifyUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
+          "modifyDate": 1653463479.559553,
           "owners": [],
           "isPrivate": false,
           "deletedAt": null,
@@ -202,6 +307,7 @@
           "recordTags": [
             "dataingestion",
             "ingest",
+            "fetch",
             "Bambenek",
             "bambenek-feed"
           ]
@@ -209,7 +315,7 @@
         {
           "@type": "Workflow",
           "triggerLimit": null,
-          "name": "> Bambenek Feed > Fetch",
+          "name": "> Bambenek Feed > Sample Data",
           "aliasName": null,
           "tag": "#Bambenek Feed",
           "description": "Fetches the Threat Intel Feeds from Bambenek using the Feeds Family type you have specified.",
@@ -217,9 +323,11 @@
           "debug": false,
           "singleRecordExecution": false,
           "remoteExecutableFlag": false,
-          "parameters": [],
+          "parameters": [
+            "feed_family_types"
+          ],
           "synchronous": false,
-          "lastModifyDate": 1653387118,
+          "lastModifyDate": 1653461304,
           "collection": "/api/3/workflow_collections/c6b6ea5d-d2e7-4b86-8f8f-83e0404bcc69",
           "versions": [],
           "triggerStep": "/api/3/workflow_steps/de0fa24a-987e-4652-9d0a-0816ba5d7f99",
@@ -232,45 +340,10 @@
                 "data": "[\n      {\n        \"ip\": \"154.94.234.107\",\n        \"nsip\": \"183.253.57.193|211.99.99.33|218.98.111.202\",\n        \"value\": \"ns1.dnsfor0.com\",\n        \"nsname\": \"ns1.dns.com|ns2.dns.com\",\n        \"manpage\": \"http://osint.bambenekconsulting.com/manual/beebone.txt\",\n        \"description\": \"Master Indicator Feed for beebone non-sinkholed domains\"\n      },\n      {\n        \"ip\": \"192.187.111.220\",\n        \"nsip\": \"63.141.242.42|179.43.134.6|179.43.173.30|192.187.111.218\",\n        \"value\": \"csmanuivsrlx.com\",\n        \"nsname\": \"ns1.namedynamics.net|ns2.namedynamics.net\",\n        \"manpage\": \"http://osint.bambenekconsulting.com/manual/dircrypt.txt\",\n        \"description\": \"Master Indicator Feed for dircrypt non-sinkholed domains\"\n      },\n      {\n        \"ip\": \"81.17.29.148\",\n        \"nsip\": \"63.141.242.42|179.43.134.6|179.43.173.30|192.187.111.218\",\n        \"value\": \"jzticafg.com\",\n        \"nsname\": \"ns1.namedynamics.net|ns2.namedynamics.net\",\n        \"manpage\": \"http://osint.bambenekconsulting.com/manual/dircrypt.txt\",\n        \"description\": \"Master Indicator Feed for dircrypt non-sinkholed domains\"\n      },\n      {\n        \"ip\": \"169.50.13.61\",\n        \"nsip\": \"8.20.241.107|8.20.241.108|8.20.243.107|8.20.243.108\",\n        \"value\": \"kcubcfuhwwn.com\",\n        \"nsname\": \"ns1.eurodns.com|ns2.eurodns.com|ns3.eurodns.com|ns4.eurodns.com\",\n        \"manpage\": \"http://osint.bambenekconsulting.com/manual/dircrypt.txt\",\n        \"description\": \"Master Indicator Feed for dircrypt non-sinkholed domains\"\n      },\n      {\n        \"ip\": \"80.92.65.188\",\n        \"nsip\": \"8.20.241.107|8.20.241.108|8.20.243.107|8.20.243.108\",\n        \"value\": \"ntrshvquunyzxevkucs.com\",\n        \"nsname\": \"ns1.eurodns.com|ns2.eurodns.com|ns3.eurodns.com|ns4.eurodns.com\",\n        \"manpage\": \"http://osint.bambenekconsulting.com/manual/dircrypt.txt\",\n        \"description\": \"Master Indicator Feed for dircrypt non-sinkholed domains\"\n      }\n]"
               },
               "status": null,
-              "top": "40",
-              "left": "880",
+              "top": "510",
+              "left": "775",
               "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
               "uuid": "02766cf7-a640-4523-8432-c9f69b70f39b"
-            },
-            {
-              "@type": "WorkflowStep",
-              "name": "Result",
-              "description": null,
-              "arguments": {
-                "new_fetch_time": "{{arrow.get(vars.steps.Fetch_and_Create.data.generatedAt).shift(minutes=+60).format('YYYY-MM-DD HH:mm')}}"
-              },
-              "status": null,
-              "top": "600",
-              "left": "100",
-              "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
-              "uuid": "23d69a69-e720-4f41-a593-b4dbfc752464"
-            },
-            {
-              "@type": "WorkflowStep",
-              "name": "Configuration",
-              "description": null,
-              "arguments": {
-                "tlp": "White",
-                "expiry": "7",
-                "confidence": "50",
-                "reputation": "Suspicious",
-                "reputation_map": "{'Good': {{'IndicatorReputation'| picklist('Good') }}, 'Malicious': {{'IndicatorReputation'| picklist('Malicious') }}, 'Suspicious': {{'IndicatorReputation'| picklist('Suspicious') }}, 'TBD': {{'IndicatorReputation'| picklist('TBD') }}, 'No Reputation Available': {{'IndicatorReputation'| picklist('No Reputation Available') }}}",
-                "high_confidence": "false",
-                "feed_family_types": "Phishing Domain",
-                "threat_intel_feeds_tLP_map": "{}",
-                "threat_intel_feeds_reputation_map": "{}",
-                "threat_intel_feeds_typeOfFeed_map": "{}"
-              },
-              "status": null,
-              "top": "220",
-              "left": "100",
-              "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
-              "uuid": "28cf0de7-85d0-4dc1-af1f-f9f1c8e6cf54"
             },
             {
               "@type": "WorkflowStep",
@@ -280,36 +353,10 @@
                 "data": "[\n{\n        \"value\": \"154.94.234.107\",\n        \"manpage\": \"http://osint.bambenekconsulting.com/manual/beebone.txt\",\n        \"description\": \"IP used by beebone C&C\",\n        \"date_created\": \"2022-04-07 04:03\"\n      },\n      {\n        \"value\": \"63.141.242.43\",\n        \"manpage\": \"http://osint.bambenekconsulting.com/manual/dircrypt.txt\",\n        \"description\": \"IP used by dircrypt C&C\",\n        \"date_created\": \"2022-04-07 04:03\"\n      },\n      {\n        \"value\": \"63.141.242.45\",\n        \"manpage\": \"http://osint.bambenekconsulting.com/manual/dircrypt.txt\",\n        \"description\": \"IP used by dircrypt C&C\",\n        \"date_created\": \"2022-04-07 04:03\"\n      },\n      {\n        \"value\": \"80.92.65.188\",\n        \"manpage\": \"http://osint.bambenekconsulting.com/manual/dircrypt.txt\",\n        \"description\": \"IP used by dircrypt C&C\",\n        \"date_created\": \"2022-04-07 04:03\"\n      }\n]"
               },
               "status": null,
-              "top": "340",
-              "left": "1160",
+              "top": "350",
+              "left": "775",
               "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
               "uuid": "2ae58b0c-3c9f-4375-9d5b-a7f6afccdddb"
-            },
-            {
-              "@type": "WorkflowStep",
-              "name": "Is data only for mapping",
-              "description": null,
-              "arguments": {
-                "conditions": [
-                  {
-                    "option": "Yes, For Mapping",
-                    "step_iri": "/api/3/workflow_steps/420500ed-0c85-4979-ab73-6a0159042554",
-                    "condition": "{{ vars.request.env_setup == true }}",
-                    "step_name": "Which feed family types data require"
-                  },
-                  {
-                    "option": "No, For Ingestion",
-                    "default": true,
-                    "step_iri": "/api/3/workflow_steps/c9574acd-218f-497c-8f26-e7b97ee1657a",
-                    "step_name": "Fetch Indicators"
-                  }
-                ]
-              },
-              "status": null,
-              "top": "340",
-              "left": "100",
-              "stepType": "/api/3/workflow_step_types/12254cf5-5db7-4b1a-8cb1-3af081924b28",
-              "uuid": "37498714-5f74-4ebd-992b-ef05e3cc1bca"
             },
             {
               "@type": "WorkflowStep",
@@ -362,8 +409,8 @@
                 ]
               },
               "status": null,
-              "top": "340",
-              "left": "560",
+              "top": "510",
+              "left": "450",
               "stepType": "/api/3/workflow_step_types/12254cf5-5db7-4b1a-8cb1-3af081924b28",
               "uuid": "420500ed-0c85-4979-ab73-6a0159042554"
             },
@@ -375,8 +422,8 @@
                 "data": "[\n      {\n        \"owner\": \"Unknown\",\n        \"value\": \"5.135.183.154\"\n      },\n      {\n        \"owner\": \"Unknown\",\n        \"value\": \"5.135.94.90\"\n      },\n      {\n        \"owner\": \"Bitdefender\",\n        \"value\": \"5.2.189.251\"\n      },\n      {\n        \"owner\": \"ShadowServer\",\n        \"value\": \"5.79.71.205\"\n      },\n      {\n        \"owner\": \"ShadowServer\",\n        \"value\": \"5.79.71.225\"\n      }\n    ]"
               },
               "status": null,
-              "top": "540",
-              "left": "1020",
+              "top": "30",
+              "left": "775",
               "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
               "uuid": "7abd4fdb-c7f8-44b3-9c6c-3106e68ed3c6"
             },
@@ -388,8 +435,8 @@
                 "data": "[\n{\n        \"value\": \"ns1.dnsfor0.com\",\n        \"manpage\": \"http://osint.bambenekconsulting.com/manual/beebone.txt\",\n        \"description\": \"Domain used by beebone\",\n        \"date_created\": \"2022-04-07 04:03\"\n      },\n      {\n        \"value\": \"csmanuivsrlx.com\",\n        \"manpage\": \"http://osint.bambenekconsulting.com/manual/dircrypt-iplist.txt\",\n        \"description\": \"Domain used by dircrypt\",\n        \"date_created\": \"2022-04-07 04:03\"\n      },\n      {\n        \"value\": \"jzticafg.com\",\n        \"manpage\": \"http://osint.bambenekconsulting.com/manual/dircrypt-iplist.txt\",\n        \"description\": \"Domain used by dircrypt\",\n        \"date_created\": \"2022-04-07 04:03\"\n      },\n      {\n        \"value\": \"kcubcfuhwwn.com\",\n        \"manpage\": \"http://osint.bambenekconsulting.com/manual/dircrypt-iplist.txt\",\n        \"description\": \"Domain used by dircrypt\",\n        \"date_created\": \"2022-04-07 04:03\"\n      }\n]"
               },
               "status": null,
-              "top": "120",
-              "left": "1000",
+              "top": "990",
+              "left": "775",
               "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
               "uuid": "a57f5ce7-3274-4666-a083-dd3177e17feb"
             },
@@ -401,8 +448,8 @@
                 "data": "[\n  {\n    \"value\": \"weaamgjdonlvyqv.com\",\n    \"description\": \"Domain used by Cryptolocker - Flashback DGA for 05 Apr 2022\",\n    \"date_created\": \"2022-04-05\",\n    \"manpage\": \"http://osint.bambenekconsulting.com/manual/cl.txt\"\n  },\n  {\n    \"value\": \"kgfwnbvmcvgjyav.net\",\n    \"description\": \"Domain used by Cryptolocker - Flashback DGA for 05 Apr 2022\",\n    \"date_created\": \"2022-04-05\",\n    \"manpage\": \"http://osint.bambenekconsulting.com/manual/cl.txt\"\n  },\n  {\n    \"value\": \"caqdrvtekasnbjg.biz\",\n    \"description\": \"Domain used by Cryptolocker - Flashback DGA for 05 Apr 2022\",\n    \"date_created\": \"2022-04-05\",\n    \"manpage\": \"http://osint.bambenekconsulting.com/manual/cl.txt\"\n  },\n  {\n    \"value\": \"dnvuoqesxnujcwk.ru\",\n    \"description\": \"Domain used by Cryptolocker - Flashback DGA for 05 Apr 2022\",\n    \"date_created\": \"2022-04-05\",\n    \"manpage\": \"http://osint.bambenekconsulting.com/manual/cl.txt\"\n  },\n  {\n    \"value\": \"dugbxmcfjoamkjw.org\",\n    \"description\": \"Domain used by Cryptolocker - Flashback DGA for 05 Apr 2022\",\n    \"date_created\": \"2022-04-05\",\n    \"manpage\": \"http://osint.bambenekconsulting.com/manual/cl.txt\"\n  }\n]"
               },
               "status": null,
-              "top": "500",
-              "left": "560",
+              "top": "830",
+              "left": "775",
               "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
               "uuid": "a945c687-b091-4450-99b9-3b1b76f5b8f0"
             },
@@ -414,36 +461,10 @@
                 "data": "[\n      {\n        \"asn\": \"14061\",\n        \"value\": \"0.black-net.life\",\n        \"netblock\": \"178.62.192.0/18\",\n        \"description\": \"Hostname used by malware\",\n        \"ipv4_address\": \"178.62.225.201\",\n        \"ASN_or_netblock\": \"https://osint.bambenekconsulting.com/manual/maldomainml-malware.txt\",\n        \"registered_domain\": \"black-net.life\"\n      },\n      {\n        \"asn\": \"14061\",\n        \"value\": \"0.goalmedia.club\",\n        \"netblock\": \"178.62.192.0/18\",\n        \"description\": \"Hostname used by malware\",\n        \"ipv4_address\": \"178.62.225.201\",\n        \"ASN_or_netblock\": \"https://osint.bambenekconsulting.com/manual/maldomainml-malware.txt\",\n        \"registered_domain\": \"goalmedia.club\"\n      },\n      {\n        \"asn\": \"45102\",\n        \"value\": \"0002.jitsimeets.aeonsolutionscenter.com\",\n        \"netblock\": \"47.254.224.0/19\",\n        \"description\": \"Hostname used by malware\",\n        \"ipv4_address\": \"47.254.234.8\",\n        \"ASN_or_netblock\": \"https://osint.bambenekconsulting.com/manual/maldomainml-malware.txt\",\n        \"registered_domain\": \"aeonsolutionscenter.com\"\n      }\n    ]"
               },
               "status": null,
-              "top": "660",
-              "left": "940",
+              "top": "670",
+              "left": "775",
               "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
               "uuid": "c551612b-8462-4676-9726-b5160a440065"
-            },
-            {
-              "@type": "WorkflowStep",
-              "name": "Fetch and Create",
-              "description": null,
-              "arguments": {
-                "name": "Bambenek Feed",
-                "config": "55b01a34-efbd-4773-a663-b6b4e12a53b6",
-                "params": {
-                  "output_mode": "Create as Feed Records in FortiSOAR",
-                  "create_pb_id": "f2b497e2-a494-4c55-bdeb-cc29e98f8888",
-                  "high_confidence": "{{vars.high_confidence}}",
-                  "feed_family_types": "{{vars.feed_family_types}}"
-                },
-                "version": "1.0.0",
-                "connector": "bambenek-feed",
-                "operation": "fetch_indicators",
-                "operationTitle": "Fetch Indicators",
-                "pickFromTenant": false,
-                "step_variables": []
-              },
-              "status": null,
-              "top": "480",
-              "left": "100",
-              "stepType": "/api/3/workflow_step_types/0bfed618-0316-11e7-93ae-92361f002671",
-              "uuid": "c9574acd-218f-497c-8f26-e7b97ee1657a"
             },
             {
               "@type": "WorkflowStep",
@@ -453,8 +474,8 @@
                 "data": "[\n      {\n        \"asn\": \"14061\",\n        \"value\": \"0.filemix-1.com\",\n        \"netblock\": \"104.248.192.0/20\",\n        \"description\": \"Hostname used by phishing\",\n        \"ipv4_address\": \"104.248.207.50\",\n        \"registered_domain\": \"filemix-1.com\",\n        \"ASN_or_netblock\": \"https://osint.bambenekconsulting.com/manual/maldomainml-phishing.txt\"\n      },\n      {\n        \"asn\": \"45102\",\n        \"value\": \"0.grijylw.cn\",\n        \"netblock\": \"47.91.128.0/18\",\n        \"description\": \"Hostname used by phishing\",\n        \"ipv4_address\": \"47.91.170.222\",\n        \"registered_domain\": \"grijylw.cn\",\n        \"ASN_or_netblock\": \"https://osint.bambenekconsulting.com/manual/maldomainml-phishing.txt\"\n      },\n      {\n        \"asn\": \"45102\",\n        \"value\": \"0.hzrmvf.cn\",\n        \"netblock\": \"47.91.128.0/18\",\n        \"description\": \"Hostname used by phishing\",\n        \"ipv4_address\": \"47.91.170.222\",\n        \"registered_domain\": \"hzrmvf.cn\",\n        \"ASN_or_netblock\": \"https://osint.bambenekconsulting.com/manual/maldomainml-phishing.txt\"\n      },\n      {\n        \"asn\": \"8075\",\n        \"value\": \"008magazine.com\",\n        \"netblock\": \"20.48.0.0/12\",\n        \"description\": \"Hostname used by phishing\",\n        \"ipv4_address\": \"20.62.72.11\",\n        \"registered_domain\": \"008magazine.com\",\n        \"ASN_or_netblock\": \"https://osint.bambenekconsulting.com/manual/maldomainml-phishing.txt\"\n      },\n      {\n        \"asn\": \"174\",\n        \"value\": \"00bry.twitterwallpro.com\",\n        \"netblock\": \"38.0.0.0/8\",\n        \"description\": \"Hostname used by phishing\",\n        \"ipv4_address\": \"38.40.158.230\",\n        \"registered_domain\": \"twitterwallpro.com\",\n        \"ASN_or_netblock\": \"https://osint.bambenekconsulting.com/manual/maldomainml-phishing.txt\"\n      }\n    ]"
               },
               "status": null,
-              "top": "180",
-              "left": "560",
+              "top": "190",
+              "left": "775",
               "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
               "uuid": "d5bd13a3-8c93-4654-a1c6-78868d459614"
             },
@@ -466,13 +487,12 @@
                 "step_variables": {
                   "input": {
                     "params": []
-                  },
-                  "_configuration_schema": "[\n    {\n      \"title\": \"High-Confidence Families Only\",\n      \"name\": \"high_confidence\",\n      \"visible\": true,\n      \"required\": true,\n      \"editable\": true,\n      \"type\": \"checkbox\",\n      \"value\": false,\n      \"onchange\": {\n        \"true\": [\n          {\n            \"title\": \"Feed Family Type\",\n            \"name\": \"feed_family_types\",\n            \"visible\": true,\n            \"required\": true,\n            \"editable\": true,\n            \"type\": \"select\",\n            \"options\": [\n              \"DGA Domain\",\n              \"C2 Domain\",\n              \"C2 IP\",\n              \"C2 All Indicator\"\n            ],\n            \"description\": \"Select Bambenek feed family type to fetch specific feed listed IPs/domain. You can choose between DGA Domain, C2 All Indicator, C2 Domain, C2 IP.\"\n          }\n        ],\n        \"false\": [\n          {\n            \"title\": \"Feed Family Type\",\n            \"name\": \"feed_family_types\",\n            \"visible\": true,\n            \"required\": true,\n            \"editable\": true,\n            \"type\": \"select\",\n            \"options\": [\n              \"DGA Domain\",\n              \"C2 Domain\",\n              \"C2 IP\",\n              \"C2 All Indicator\",\n              \"Phishing Domain\",\n              \"Malware Domain\",\n              \"Sinkhole\"\n            ],\n            \"description\": \"Select Bambenek feed family type to fetch specific feed listed IPs/domain. You can choose between DGA Domain, C2 All Indicator, C2 Domain, C2 IP, Phishing Domain and Malware Domain.\"\n          }\n        ]\n      },\n      \"tooltip\": \"Set High-Confidence Families Only to true if you want to fetch specific Bambenek feed family type as high confidence IPs/domain.\",\n      \"description\": \"Set High-Confidence Families Only to true if you want to fetch specific Bambenek feed family type as high confidence IPs/domain. When Feed Family Type set to DGA Domain and High-Confidence Families Only set to True then it will fetch High-Confidence DGA Domain feed.\"\n    },\n    {\n      \"title\": \"Confidence\",\n      \"name\": \"confidence\",\n      \"type\": \"integer\",\n      \"tooltip\": \"Default Confidence score to be set for the feeds\",\n      \"required\": false,\n      \"editable\": true,\n      \"visible\": true,\n      \"value\": 50,\n      \"validation\": {\n        \"minlength\": 0,\n        \"maxlength\": 100\n      }\n    },\n    {\n      \"title\": \"Reputation\",\n      \"name\": \"reputation\",\n      \"type\": \"select\",\n      \"tooltip\": \"Default Reputation to be set for the feeds\",\n      \"required\": true,\n      \"editable\": true,\n      \"visible\": true,\n      \"options\": [\n        \"Good\",\n        \"Suspicious\",\n        \"Malicious\",\n        \"No Reputation Available\",\n        \"TBD\"\n      ],\n      \"value\": \"Suspicious\"\n    },\n    {\n      \"title\": \"TLP\",\n      \"name\": \"tlp\",\n      \"type\": \"select\",\n      \"tooltip\": \"Default TLP to be set for the feeds\",\n      \"required\": false,\n      \"editable\": true,\n      \"visible\": true,\n      \"options\": [\n        \"Red\",\n        \"Amber\",\n        \"Green\",\n        \"White\"\n      ],\n      \"value\": \"White\"\n    },\n    {\n      \"title\": \"Maximum Age (in days)\",\n      \"name\": \"expiry\",\n      \"type\": \"integer\",\n      \"tooltip\": \"Default age for the feeds. The indicator expires on 'valid_until' date unless a different expiry is specified here. If specified, the indicator will be marked expired on valid_from + expiry.\",\n      \"required\": false,\n      \"editable\": true,\n      \"visible\": true\n    }\n  ]"
+                  }
                 }
               },
               "status": null,
-              "top": "80",
-              "left": "100",
+              "top": "510",
+              "left": "125",
               "stepType": "/api/3/workflow_step_types/b348f017-9a94-471f-87f8-ce88b6a7ad62",
               "uuid": "de0fa24a-987e-4652-9d0a-0816ba5d7f99"
             }
@@ -489,39 +509,12 @@
             },
             {
               "@type": "WorkflowRoute",
-              "name": "Configuration -> Is data only for mapping",
-              "targetStep": "/api/3/workflow_steps/37498714-5f74-4ebd-992b-ef05e3cc1bca",
-              "sourceStep": "/api/3/workflow_steps/28cf0de7-85d0-4dc1-af1f-f9f1c8e6cf54",
-              "label": null,
-              "isExecuted": false,
-              "uuid": "38c3c01c-95dc-413d-a603-4fd2325af3f6"
-            },
-            {
-              "@type": "WorkflowRoute",
               "name": "Which feed family types data require -> Return Phishing Domain Sample Data",
               "targetStep": "/api/3/workflow_steps/d5bd13a3-8c93-4654-a1c6-78868d459614",
               "sourceStep": "/api/3/workflow_steps/420500ed-0c85-4979-ab73-6a0159042554",
               "label": "Phishing Domain",
               "isExecuted": false,
               "uuid": "3eb367f9-fdc1-42c1-905c-f93055a83bda"
-            },
-            {
-              "@type": "WorkflowRoute",
-              "name": "Fetch Indicators -> Result",
-              "targetStep": "/api/3/workflow_steps/23d69a69-e720-4f41-a593-b4dbfc752464",
-              "sourceStep": "/api/3/workflow_steps/c9574acd-218f-497c-8f26-e7b97ee1657a",
-              "label": null,
-              "isExecuted": false,
-              "uuid": "589b8139-7323-4683-80da-05babbb7ede4"
-            },
-            {
-              "@type": "WorkflowRoute",
-              "name": "Start -> Configuration",
-              "targetStep": "/api/3/workflow_steps/28cf0de7-85d0-4dc1-af1f-f9f1c8e6cf54",
-              "sourceStep": "/api/3/workflow_steps/de0fa24a-987e-4652-9d0a-0816ba5d7f99",
-              "label": null,
-              "isExecuted": false,
-              "uuid": "5919b638-09d4-4b72-a54c-ef78498acd2e"
             },
             {
               "@type": "WorkflowRoute",
@@ -534,12 +527,12 @@
             },
             {
               "@type": "WorkflowRoute",
-              "name": "Is data only for mapping -> Copy of Is data only for mapping",
+              "name": "Start -> Which feed family types data require",
               "targetStep": "/api/3/workflow_steps/420500ed-0c85-4979-ab73-6a0159042554",
-              "sourceStep": "/api/3/workflow_steps/37498714-5f74-4ebd-992b-ef05e3cc1bca",
-              "label": "Yes, For Mapping",
+              "sourceStep": "/api/3/workflow_steps/de0fa24a-987e-4652-9d0a-0816ba5d7f99",
+              "label": null,
               "isExecuted": false,
-              "uuid": "97ec6d77-9983-4086-83e7-b8301757753d"
+              "uuid": "69f2c3b5-a434-40db-8eed-3a89bd83a98d"
             },
             {
               "@type": "WorkflowRoute",
@@ -570,15 +563,6 @@
             },
             {
               "@type": "WorkflowRoute",
-              "name": "Is data only for mapping -> Fetch Indicators2",
-              "targetStep": "/api/3/workflow_steps/c9574acd-218f-497c-8f26-e7b97ee1657a",
-              "sourceStep": "/api/3/workflow_steps/37498714-5f74-4ebd-992b-ef05e3cc1bca",
-              "label": "No, For Ingestion",
-              "isExecuted": false,
-              "uuid": "e68ee537-0bbd-48ba-a4d0-88bf6ba172b3"
-            },
-            {
-              "@type": "WorkflowRoute",
               "name": "Which feed family types data require -> Return High C2 Domain Sample Data",
               "targetStep": "/api/3/workflow_steps/a57f5ce7-3274-4666-a083-dd3177e17feb",
               "sourceStep": "/api/3/workflow_steps/420500ed-0c85-4979-ab73-6a0159042554",
@@ -593,14 +577,13 @@
           "createUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
           "createDate": 1653370636.321089,
           "modifyUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
-          "modifyDate": 1653387114.491101,
+          "modifyDate": 1653461301.932243,
           "owners": [],
           "isPrivate": false,
           "deletedAt": null,
           "importedBy": [],
           "recordTags": [
             "dataingestion",
-            "fetch",
             "Bambenek",
             "bambenek-feed"
           ]
@@ -718,7 +701,7 @@
             "feed_family_type"
           ],
           "synchronous": false,
-          "lastModifyDate": 1652876619,
+          "lastModifyDate": 1653463780,
           "collection": "/api/3/workflow_collections/c6b6ea5d-d2e7-4b86-8f8f-83e0404bcc69",
           "versions": [],
           "triggerStep": "/api/3/workflow_steps/4cc9a18e-2f5c-41d7-9593-d0f21c1a182b",
@@ -751,9 +734,9 @@
                 "confidence": "50",
                 "reputation": "Suspicious",
                 "reputation_map": "{'Good': {{'IndicatorReputation'| picklist('Good') }}, 'Malicious': {{'IndicatorReputation'| picklist('Malicious') }}, 'Suspicious': {{'IndicatorReputation'| picklist('Suspicious') }}, 'TBD': {{'IndicatorReputation'| picklist('TBD') }}, 'No Reputation Available': {{'IndicatorReputation'| picklist('No Reputation Available') }}}",
+                "type_of_feed_map": "{'C2 IP': {{\"ThreatIntelFeedType\" | picklist(\"IP Address\")}}, 'Sinkhole': {{\"ThreatIntelFeedType\" | picklist(\"IP Address\")}}, 'DGA Domain': {{\"ThreatIntelFeedType\" | picklist(\"Domain\")}}, 'C2 All Indicator': {{\"ThreatIntelFeedType\" | picklist(\"Domain\")}}, 'C2 Domain': {{\"ThreatIntelFeedType\" | picklist(\"Domain\")}}, 'Phishing Domain': {{\"ThreatIntelFeedType\" | picklist(\"Domain\")}}, 'Malware Domain': {{\"ThreatIntelFeedType\" | picklist(\"Domain\")}}}",
                 "threat_intel_feeds_tLP_map": "{}",
-                "threat_intel_feeds_reputation_map": "{}",
-                "threat_intel_feeds_typeOfFeed_map": "{'C2 IP': {{\"ThreatIntelFeedType\" | picklist(\"IP Address\")}}, 'Sinkhole': {{\"ThreatIntelFeedType\" | picklist(\"IP Address\")}}, 'DGA Domain': {{\"ThreatIntelFeedType\" | picklist(\"Domain\")}}, 'C2 All Indicator': {{\"ThreatIntelFeedType\" | picklist(\"Domain\")}}, 'C2 Domain': {{\"ThreatIntelFeedType\" | picklist(\"Domain\")}}, 'Phishing Domain': {{\"ThreatIntelFeedType\" | picklist(\"Domain\")}}, 'Malware Domain': {{\"ThreatIntelFeedType\" | picklist(\"Domain\")}}}"
+                "threat_intel_feeds_reputation_map": "{}"
               },
               "status": null,
               "top": "165",
@@ -804,7 +787,7 @@
               "arguments": {
                 "expiry_date": "{{arrow.get().int_timestamp + (vars.expiry | int)*24*60*60 }}",
                 "tlp_resolved": "{% if vars.tlp %}{{ vars.tlp | resolveRange(vars.tlp_map)}}{% endif %}",
-                "feed_type_resolved": "{{ vars.input.params.feed_family_type | resolveRange(vars. threat_intel_feeds_typeOfFeed_map)}}"
+                "feed_type_resolved": "{{vars.input.params.feed_family_type| resolveRange(vars.type_of_feed_map)}}"
               },
               "status": null,
               "top": "300",
@@ -847,8 +830,8 @@
           "id": 1577,
           "createUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
           "createDate": 1653370636.321658,
-          "modifyUser": "/api/3/appliances/57545210-2adc-472b-a24f-2df6ee8dfe63",
-          "modifyDate": 1653370636.321658,
+          "modifyUser": "/api/3/people/3451141c-bac6-467c-8d72-85e0fab569ce",
+          "modifyDate": 1653463777.034807,
           "owners": [],
           "isPrivate": false,
           "deletedAt": null,
@@ -866,9 +849,9 @@
   "exported_tags": [
     "dataingestion",
     "ingest",
+    "fetch",
     "Bambenek",
     "bambenek-feed",
-    "fetch",
     "create"
   ]
 }
