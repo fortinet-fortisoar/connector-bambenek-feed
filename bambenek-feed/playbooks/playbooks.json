@@ -624,8 +624,7 @@
           "singleRecordExecution": false,
           "remoteExecutableFlag": false,
           "parameters": [
-            "ingestedData",
-            "feed_family_type"
+            "ingestedData"
           ],
           "synchronous": false,
           "lastModifyDate": 1653556085,
@@ -718,7 +717,7 @@
               "arguments": {
                 "expiry_date": "{{arrow.get().int_timestamp + (vars.expiry | int)*24*60*60 }}",
                 "tlp_resolved": "{% if vars.tlp %}{{ vars.tlp | resolveRange(vars.tlp_map)}}{% endif %}",
-                "feed_type_resolved": "{{vars.input.params.feed_family_type| resolveRange(vars.type_of_feed_map)}}"
+                "feed_type_resolved": "{{vars.feed_family_types| resolveRange(vars.type_of_feed_map)}}"
               },
               "status": null,
               "top": "300",
