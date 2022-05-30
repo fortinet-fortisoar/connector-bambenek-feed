@@ -175,13 +175,18 @@ def fetch_indicators(config, params, **kwargs):
     high_confidence = params.get('high_confidence', False)
     output_mode = params.get('output_mode')
     create_pb_id = params.get("create_pb_id")
+    confidence = params.get("confidence", 50)
+    reputation = params.get("reputation", "Suspicious")
+    tlp = params.get("tlp", "White")
+    expiry = params.get("expiry", 7)
     feed_name = ('High-Confidence ' if high_confidence else '') + '{feed_family_type}'.format(
         feed_family_type=feed_family_type)
     url = '{feed_type}'.format(feed_type=FEED_MAPPING.get(feed_name).get('url'))
     api_response = _api_request(config, url)
     result = convert_to_json(api_response, feed_name)
     if output_mode == 'Create as Feed Records in FortiSOAR':
-        pb_params = {'data': {'feed_family_type': feed_family_type}}
+        pb_params = {'data': {'feed_family_type': feed_family_type, 'tlp': tlp, 'confidence': confidence,
+                              'reputation': reputation, 'expiry': expiry}}
         trigger_ingest_playbook(result.get('feed'), create_pb_id, parent_env=kwargs.get('env', {}), batch_size=2000,
                                 pb_params=pb_params.get('data', {}), dedup_field='value')
         logger.info("Successfully triggered playbooks to create feed records")

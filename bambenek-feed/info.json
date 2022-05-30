@@ -153,6 +153,38 @@
               }
             ]
           }
+        },
+        {
+          "title": "Confidence",
+          "type": "text",
+          "name": "confidence",
+          "required": false,
+          "editable": true,
+          "visible": false
+        },
+        {
+          "title": "Reputation",
+          "type": "text",
+          "name": "reputation",
+          "required": false,
+          "editable": true,
+          "visible": false
+        },
+        {
+          "title": "TLP",
+          "type": "text",
+          "name": "tlp",
+          "required": false,
+          "editable": true,
+          "visible": false
+        },
+        {
+          "title": "Expiry",
+          "type": "text",
+          "name": "expiry",
+          "required": false,
+          "editable": true,
+          "visible": false
         }
       ],
       "enabled": true,
