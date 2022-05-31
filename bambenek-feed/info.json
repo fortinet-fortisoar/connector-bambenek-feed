@@ -155,7 +155,7 @@
           }
         },
         {
-          "title": "Extra Playbook Parameters",
+          "title": "Create Playbook Parameters",
           "type": "json",
           "name": "create_pb_params",
           "value": "{ \"tlp\": \"White\", \"confidence\": \"50\", \"reputation\": \"Suspicious\",\"expiry\": \"7\"}",
