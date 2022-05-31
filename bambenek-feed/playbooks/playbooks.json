@@ -122,10 +122,7 @@
                   "create_pb_id": "f2b497e2-a494-4c55-bdeb-cc29e98f8888",
                   "high_confidence": "{{vars.high_confidence}}",
                   "feed_family_types": "{{vars.feed_family_types}}",
-                  "tlp": "{{vars.tlp}}",
-                  "expiry": "{{vars.expiry}}",
-                  "confidence": "{{vars.confidence}}",
-                  "reputation": "{{vars.reputation}}"
+                  "extra_pb_params": "{ \"tlp\": \"{{vars.tlp}}\", \"confidence\": \"{{vars.confidence}}\", \"reputation\": \"{{vars.reputation}}\",\"expiry\": \"{{vars.expiry}}\"}"
                 },
                 "version": "1.0.0",
                 "connector": "bambenek-feed",
@@ -703,10 +700,7 @@
           "parameters": [
             "ingestedData",
             "feed_family_type",
-            "tlp",
-            "confidence",
-            "reputation",
-            "expiry"
+            "extra_pb_params"
           ],
           "synchronous": false,
           "lastModifyDate": 1653895632,
@@ -719,11 +713,11 @@
               "name": "Configuration",
               "description": null,
               "arguments": {
-                "tlp": "{{vars.input.params.tlp if vars.input.params.tlp else \"White\"}}",
-                "expiry": "{{vars.input.params.expiry if vars.input.params.expiry else 7}}",
+                "tlp": "{{vars.input.params['extra_pb_params'].tlp if vars.input.params['extra_pb_params'].tlp else \"White\"}}",
+                "expiry": "{{vars.input.params['extra_pb_params'].expiry if vars.input.params['extra_pb_params'].expiry else 7}}",
                 "tlp_map": "{'Red': {{'TrafficLightProtocol'| picklist('Red') }}, 'Amber': {{'TrafficLightProtocol'| picklist('Amber') }}, 'Green': {{'TrafficLightProtocol'| picklist('Green') }}, 'White': {{'TrafficLightProtocol'| picklist('White') }}}",
-                "confidence": "{{vars.input.params.confidence if vars.input.params.confidence else 50}}",
-                "reputation": "{{vars.input.params.reputation if vars.input.params.reputation else \"Suspicious\"}}",
+                "confidence": "{{vars.input.params['extra_pb_params'].confidence if vars.input.params['extra_pb_params'].confidence else 50}}",
+                "reputation": "{{vars.input.params['extra_pb_params'].reputation if vars.input.params['extra_pb_params'].reputation else \"Suspicious\"}}",
                 "reputation_map": "{'Good': {{'IndicatorReputation'| picklist('Good') }}, 'Malicious': {{'IndicatorReputation'| picklist('Malicious') }}, 'Suspicious': {{'IndicatorReputation'| picklist('Suspicious') }}, 'TBD': {{'IndicatorReputation'| picklist('TBD') }}, 'No Reputation Available': {{'IndicatorReputation'| picklist('No Reputation Available') }}}",
                 "type_of_feed_map": "{'C2 IP': {{\"ThreatIntelFeedType\" | picklist(\"IP Address\")}}, 'Sinkhole': {{\"ThreatIntelFeedType\" | picklist(\"IP Address\")}}, 'DGA Domain': {{\"ThreatIntelFeedType\" | picklist(\"Domain\")}}, 'C2 All Indicator': {{\"ThreatIntelFeedType\" | picklist(\"Domain\")}}, 'C2 Domain': {{\"ThreatIntelFeedType\" | picklist(\"Domain\")}}, 'Phishing Domain': {{\"ThreatIntelFeedType\" | picklist(\"Domain\")}}, 'Malware Domain': {{\"ThreatIntelFeedType\" | picklist(\"Domain\")}}}",
                 "threat_intel_feeds_tLP_map": "{}",
